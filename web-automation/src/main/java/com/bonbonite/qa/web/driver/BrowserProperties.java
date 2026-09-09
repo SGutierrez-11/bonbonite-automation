@@ -41,6 +41,16 @@ public class BrowserProperties {
   /** Dirección del concentrador de Selenium Grid. */
   public static final String SELENIUM_GRID_URL = getParameter("selenium.grid.url");
 
+  /** Indica si se adjunta una captura en cada paso, no solo en los fallos. */
+  public static final boolean SCREENSHOT_ON_STEP =
+    Boolean.parseBoolean(getParameter("screenshot.on.step"));
+
   /** Dirección principal del sitio bajo prueba. */
   public static final String BASE_URL = getParameter("base.url", WEB_MODULE);
+
+  /** Dirección de la pantalla de cuenta. */
+  public static final String ACCOUNT_URL = getParameter("account.url", WEB_MODULE);
+
+  /** Dirección del carrito. */
+  public static final String CART_URL = getParameter("cart.url", WEB_MODULE);
 }
