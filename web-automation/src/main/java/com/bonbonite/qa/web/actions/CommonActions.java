@@ -127,6 +127,28 @@ public class CommonActions {
   }
 
   /**
+   * Ticks a checkbox when it is not already selected.
+   *
+   * <p>Some checkboxes of the site are visually replaced by a styled element, so the
+   * click is delegated to JavaScript when the native one is intercepted.</p>
+   *
+   * @param element     checkbox to tick
+   * @param description element name as displayed in the report
+   */
+  @Step("Marcar '{description}'")
+  public static void check(WebElement element, String description) {
+    if (element.isSelected()) {
+      return;
+    }
+    try {
+      clickHandlingInterception(element, description);
+    } catch (CustomException exception) {
+      log.debug("Native click failed on '{}', falling back to JavaScript", description);
+      clickByJavaScript(element, description);
+    }
+  }
+
+  /**
    * Returns the visible text of an element.
    *
    * @param element     element to read
@@ -137,6 +159,24 @@ public class CommonActions {
   public static String getText(WebElement element, String description) {
     requireVisible(element, description);
     return element.getText().trim();
+  }
+
+  /**
+   * Returns the current value of a form field.
+   *
+   * <p>It reads the DOM property rather than the HTML attribute: the attribute keeps
+   * the value the page was rendered with, so after typing into the field it would
+   * report a stale result.</p>
+   *
+   * @param element     field to read
+   * @param description element name as displayed in the report
+   * @return the current value of the field, never null
+   */
+  @Step("Obtener el valor de '{description}'")
+  public static String getValue(WebElement element, String description) {
+    requireVisible(element, description);
+    String value = element.getDomProperty("value");
+    return value == null ? "" : value;
   }
 
   /**
@@ -156,10 +196,15 @@ public class CommonActions {
   /**
    * Scrolls the page until the element is centered in the view.
    *
+   * <p>It waits for the element first. Some forms of the site are rendered by
+   * JavaScript after the page load and replace their own markup, so scrolling without
+   * waiting hits the window where the element does not exist yet.</p>
+   *
    * @param element     element to bring into view
    * @param description element name as displayed in the report
    */
   public static void scrollToElement(WebElement element, String description) {
+    requireVisible(element, description);
     javascriptExecutor()
       .executeScript("arguments[0].scrollIntoView({block: 'center'});", element);
   }
