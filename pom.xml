@@ -41,6 +41,10 @@
 
         <threadCount>3</threadCount>
         <suiteXmlFile>regression.xml</suiteXmlFile>
+
+        <!-- Los modulos de codigo son bibliotecas y no ejecutan pruebas. Surefire se
+             activa unicamente en el modulo runner, que sobrescribe esta propiedad. -->
+        <skipTests>true</skipTests>
     </properties>
 
     <dependencyManagement>
