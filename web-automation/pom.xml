@@ -14,11 +14,61 @@
     <name>Web Automation Module</name>
 
     <dependencies>
+        <!-- Base del framework y capa de servicios de API -->
         <dependency>
             <groupId>com.bonbonite.qa</groupId>
             <artifactId>api-automation</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+
+        <!-- Automatizacion de navegador -->
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+        </dependency>
+
+        <!-- BDD y motor de ejecucion -->
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-java</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-testng</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+        </dependency>
+
+        <!-- Reportes -->
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-cucumber7-jvm</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-testng</artifactId>
+        </dependency>
+
+        <!-- Lombok tiene alcance provided, no se hereda de forma transitiva -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>io.qameta.allure</groupId>
+                <artifactId>allure-maven</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
