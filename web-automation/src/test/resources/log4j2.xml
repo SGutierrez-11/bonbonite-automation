@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+
+    <Properties>
+        <Property name="pattern">%d{HH:mm:ss.SSS} [%t] %-5level %logger{1} - %msg%n</Property>
+    </Properties>
+
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${pattern}"/>
+        </Console>
+        <File name="File" fileName="target/logs/execution.log" append="false">
+            <PatternLayout pattern="${pattern}"/>
+        </File>
+    </Appenders>
+
+    <Loggers>
+        <Logger name="com.bonbonite.qa" level="INFO"/>
+
+        <!-- Estas librerias registran cada peticion interna del driver y del cliente
+             HTTP; en nivel INFO la consola queda ilegible y oculta las trazas propias
+             de la automatizacion. -->
+        <Logger name="org.openqa.selenium" level="WARN"/>
+        <Logger name="org.apache.http" level="WARN"/>
+        <Logger name="io.netty" level="WARN"/>
+
+        <Root level="WARN">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="File"/>
+        </Root>
+    </Loggers>
+
+</Configuration>
