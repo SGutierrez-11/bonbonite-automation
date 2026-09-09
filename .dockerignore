@@ -1,0 +1,8 @@
+.git/
+.idea/
+target/
+**/target/
+docker/
+.github/
+*.md
+.claude/
