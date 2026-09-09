@@ -15,6 +15,7 @@ import java.time.Duration;
 import java.util.List;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -58,7 +59,24 @@ public class Browser {
 
     WebDriver driver = SELENIUM_GRID ? remoteDriver(browserName) : localDriver(browserName);
     driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(WAIT_IMPLICIT));
+    applyWindowSize(driver);
     return driver;
+  }
+
+  /**
+   * Fija el tamaño de la ventana mediante la API del driver.
+   *
+   * <p>El argumento de línea de comandos del navegador no siempre se respeta, y el
+   * sitio bajo prueba renderiza encabezados distintos según el ancho disponible: si
+   * la ventana queda por debajo del punto de quiebre, los localizadores de la vista
+   * de escritorio apuntan a elementos ocultos. Fijar el tamaño aquí garantiza que
+   * todos los navegadores arranquen con la misma resolución.</p>
+   *
+   * @param driver driver recién creado
+   */
+  private static void applyWindowSize(WebDriver driver) {
+    driver.manage().window().setSize(
+      new Dimension(Integer.parseInt(windowDimension(0)), Integer.parseInt(windowDimension(1))));
   }
 
   private static WebDriver localDriver(String browserName) {
