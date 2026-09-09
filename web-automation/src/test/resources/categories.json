@@ -1,0 +1,14 @@
+[
+  {
+    "name": "Defecto del producto",
+    "matchedStatuses": ["failed"]
+  },
+  {
+    "name": "Error del framework",
+    "matchedStatuses": ["broken"]
+  },
+  {
+    "name": "Escenarios omitidos",
+    "matchedStatuses": ["skipped"]
+  }
+]
