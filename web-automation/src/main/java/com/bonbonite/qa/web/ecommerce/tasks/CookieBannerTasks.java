@@ -10,7 +10,7 @@ import io.qameta.allure.Step;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Acciones sobre el banner de consentimiento de cookies.
+ * Actions on the cookie consent banner.
  */
 @Slf4j
 public class CookieBannerTasks extends CookieBannerComponent {
@@ -18,16 +18,16 @@ public class CookieBannerTasks extends CookieBannerComponent {
   private static final int BANNER_TIMEOUT = 10;
 
   /**
-   * Rechaza las cookies opcionales si el banner está presente.
+   * Rejects the optional cookies when the banner is present.
    *
-   * <p>El banner no siempre aparece: depende de si el navegador conserva el
-   * consentimiento de una sesión anterior. Por eso la ausencia del banner no es un
-   * error, y el escenario continúa con normalidad.</p>
+   * <p>The banner does not always show up: it depends on whether the browser keeps
+   * the consent from a previous session. Its absence is therefore not an error and
+   * the scenario carries on normally.</p>
    */
   @Step("Rechazar las cookies opcionales")
   public void rejectOptionalCookies() {
     if (!isTheElementVisible(getLblCookieBanner(), BANNER_TIMEOUT)) {
-      log.info("El banner de cookies no se mostró; la sesión ya tenía consentimiento");
+      log.info("The cookie banner was not displayed; the session already had consent");
       return;
     }
     click(getBtnRejectAll(), COOKIE_REJECT_BUTTON.getValue());

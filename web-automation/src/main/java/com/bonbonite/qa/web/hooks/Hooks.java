@@ -13,22 +13,22 @@ import io.cucumber.java.Scenario;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Ciclo de vida de los escenarios web.
+ * Lifecycle of the web scenarios.
  *
- * <p>Los hooks solo gestionan recursos: levantan el navegador, consolidan las
- * aserciones acumuladas y limpian el contexto. Ninguna lógica de negocio vive aquí;
- * las precondiciones de datos se resuelven en los pasos, por servicio.</p>
+ * <p>Hooks only manage resources: they start the browser, consolidate the
+ * accumulated assertions and clear the context. No business logic lives here; data
+ * preconditions are resolved in the steps, through services.</p>
  *
- * <p>El orden de los {@code @After} importa. Cucumber ejecuta primero los de mayor
- * {@code order}, así que las aserciones se consolidan antes de cerrar el navegador:
- * de lo contrario el listener de Allure no alcanzaría a capturar la pantalla del
- * fallo porque la sesión ya estaría cerrada.</p>
+ * <p>The order of the {@code @After} hooks matters. Cucumber runs the ones with the
+ * highest {@code order} first, so assertions are consolidated before the browser is
+ * closed: otherwise the Allure listener would not manage to capture the failure
+ * screenshot, because the session would already be gone.</p>
  */
 @Slf4j
 public class Hooks {
 
   /**
-   * Registra en el reporte el entorno con el que se lanzó la suite.
+   * Records in the report the environment the suite was launched with.
    */
   @BeforeAll
   public static void reportEnvironment() {
@@ -36,18 +36,18 @@ public class Hooks {
   }
 
   /**
-   * Levanta el navegador antes de cada escenario etiquetado como web.
+   * Starts the browser before every scenario tagged as web.
    *
-   * @param scenario escenario que va a iniciar
+   * @param scenario scenario about to start
    */
   @Before(value = "@web", order = 0)
   public void initDriver(Scenario scenario) {
-    log.info("Iniciando escenario: {}", scenario.getName());
+    log.info("Starting scenario: {}", scenario.getName());
     WebBaseScreen.setDriver(Browser.createWebDriver());
   }
 
   /**
-   * Consolida las aserciones suaves acumuladas durante el escenario.
+   * Consolidates the soft assertions accumulated during the scenario.
    */
   @After(value = "@web", order = 2)
   public void assertAll() {
@@ -55,9 +55,9 @@ public class Hooks {
   }
 
   /**
-   * Adjunta la evidencia final cuando el escenario termina en fallo.
+   * Attaches the final evidence when the scenario ends in failure.
    *
-   * @param scenario escenario finalizado
+   * @param scenario finished scenario
    */
   @After(value = "@web", order = 1)
   public void attachEvidenceOnFailure(Scenario scenario) {
@@ -68,13 +68,13 @@ public class Hooks {
   }
 
   /**
-   * Cierra el navegador y limpia el contexto al terminar el escenario.
+   * Closes the browser and clears the context when the scenario ends.
    *
-   * @param scenario escenario finalizado
+   * @param scenario finished scenario
    */
   @After(value = "@web", order = 0)
   public void tearDown(Scenario scenario) {
-    log.info("Finalizando escenario: {} con estado {}", scenario.getName(), scenario.getStatus());
+    log.info("Finished scenario: {} with status {}", scenario.getName(), scenario.getStatus());
     WebBaseScreen.removeDriver();
     cleanTestContext();
   }

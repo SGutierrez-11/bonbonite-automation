@@ -8,13 +8,13 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.PageFactory;
 
 /**
- * Clase base de todas las pantallas del sitio.
+ * Base class of every screen of the site.
  *
- * <p>Cumple dos funciones. La primera es custodiar el WebDriver: lo mantiene en una
- * variable por hilo, lo que permite que varios escenarios se ejecuten en paralelo
- * sin compartir navegador. La segunda es inicializar los elementos anotados con
- * {@code FindBy} al construir la pantalla, de modo que las clases que heredan de
- * ella solo declaren localizadores.</p>
+ * <p>It serves two purposes. The first is owning the WebDriver: it keeps it in a
+ * thread local variable, which allows several scenarios to run in parallel without
+ * sharing a browser. The second is initializing the elements annotated with
+ * {@code FindBy} when the screen is constructed, so that subclasses only declare
+ * locators.</p>
  */
 @Slf4j
 @Getter
@@ -23,40 +23,40 @@ public abstract class WebBaseScreen {
   private static final ThreadLocal<WebDriver> DRIVER = new ThreadLocal<>();
 
   /**
-   * Devuelve el driver asociado al hilo en ejecución.
+   * Returns the driver bound to the running thread.
    *
-   * @return driver del hilo actual, o {@code null} si todavía no se ha creado
+   * @return the current thread driver, or {@code null} if it has not been created yet
    */
   public static WebDriver getDriver() {
     return DRIVER.get();
   }
 
   /**
-   * Asocia un driver al hilo en ejecución.
+   * Binds a driver to the running thread.
    *
-   * @param driver driver a asociar
+   * @param driver driver to bind
    */
   public static void setDriver(WebDriver driver) {
     DRIVER.set(driver);
   }
 
   /**
-   * Cierra el navegador del hilo actual y libera la referencia.
+   * Quits the browser of the current thread and releases the reference.
    */
   public static void removeDriver() {
     WebDriver driver = DRIVER.get();
     if (driver != null) {
       driver.quit();
       DRIVER.remove();
-      log.debug("Driver cerrado y liberado del hilo actual");
+      log.debug("Driver quit and released from the current thread");
     }
   }
 
   /**
-   * Inicializa los localizadores de la pantalla mediante Page Factory.
+   * Initializes the screen locators through Page Factory.
    *
-   * <p>Si el hilo aún no tiene driver se crea uno, de modo que una pantalla pueda
-   * instanciarse sin depender del orden de los hooks.</p>
+   * <p>When the thread has no driver yet, one is created, so a screen can be
+   * instantiated without depending on the order of the hooks.</p>
    */
   protected WebBaseScreen() {
     if (getDriver() == null) {
@@ -66,18 +66,18 @@ public abstract class WebBaseScreen {
   }
 
   /**
-   * Abre una dirección en el navegador.
+   * Opens an address in the browser.
    *
-   * @param url dirección a abrir
+   * @param url address to open
    */
   @Step("Abrir la página {url}")
   public void openPage(String url) {
-    log.info("Abriendo {}", url);
+    log.info("Opening {}", url);
     getDriver().get(url);
   }
 
   /**
-   * Recarga la página actual.
+   * Reloads the current page.
    */
   @Step("Recargar la página")
   public void refreshPage() {
@@ -85,9 +85,9 @@ public abstract class WebBaseScreen {
   }
 
   /**
-   * Devuelve la dirección que muestra el navegador en este momento.
+   * Returns the address currently displayed by the browser.
    *
-   * @return URL actual
+   * @return the current URL
    */
   public String getCurrentUrl() {
     return getDriver().getCurrentUrl();

@@ -6,12 +6,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * Secciones del catálogo de la tienda.
+ * Sections of the store catalog.
  *
- * <p>Cada sección conoce el nombre con el que aparece en el menú y el identificador
- * con el que la Store API la reconoce. Tener ambos en el mismo lugar permite que un
- * escenario escrito en lenguaje de negocio —"la sección Zapatos"— se traduzca tanto
- * a un clic en el menú como a una consulta de precondición por servicio.</p>
+ * <p>Each section knows the name it shows in the menu and the identifier the Store
+ * API recognises it by. Keeping both together lets a scenario written in business
+ * language — "the Zapatos section" — translate into either a click on the menu or a
+ * precondition query through the service.</p>
  */
 @Getter
 @AllArgsConstructor
@@ -28,11 +28,11 @@ public enum StoreSection {
   private final String categorySlug;
 
   /**
-   * Resuelve la sección a partir del nombre con el que aparece en el menú.
+   * Resolves a section from the name it shows in the menu.
    *
-   * @param menuName nombre visible de la sección, sin distinguir mayúsculas
-   * @return sección correspondiente
-   * @throws CustomException si el nombre no corresponde a ninguna sección
+   * @param menuName visible name of the section, case insensitive
+   * @return the matching section
+   * @throws CustomException if the name does not match any section
    */
   public static StoreSection byMenuName(String menuName) {
     return Arrays.stream(values())

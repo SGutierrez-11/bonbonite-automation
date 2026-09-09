@@ -18,59 +18,59 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
- * Esperas explícitas sobre los elementos de la interfaz.
+ * Explicit waits over the interface elements.
  *
- * <p>El sitio carga buena parte de su contenido después del evento de carga de la
- * página, de modo que consultar un elemento apenas navegar produce resultados
- * intermitentes. Todas las esperas del framework pasan por aquí y ninguna usa
- * pausas fijas: se espera por una condición observable, no por un tiempo.</p>
+ * <p>The site loads a good part of its content after the page load event, so
+ * querying an element right after navigating produces flaky results. Every wait of
+ * the framework goes through this class and none of them uses a fixed pause: they
+ * wait for an observable condition, not for an amount of time.</p>
  *
- * <p>Antes de esperar se desactiva la espera implícita del driver y se restaura al
- * terminar. Mezclar ambas esperas produce tiempos impredecibles, porque cada
- * consulta interna de la espera explícita heredaría el tiempo de la implícita.</p>
+ * <p>Before waiting, the driver implicit wait is disabled and restored afterwards.
+ * Mixing both waits produces unpredictable timings, because every internal lookup
+ * performed by the explicit wait would inherit the implicit one.</p>
  */
 @Slf4j
 @UtilityClass
 public class WaitActions {
 
   /**
-   * Espera a que un elemento sea visible.
+   * Waits until an element becomes visible.
    *
-   * @param element          elemento a observar
-   * @param timeoutInSeconds segundos máximos de espera
-   * @return {@code true} si el elemento se hizo visible dentro del tiempo indicado
+   * @param element          element to observe
+   * @param timeoutInSeconds maximum seconds to wait
+   * @return {@code true} if the element became visible within the given time
    */
   public static boolean isTheElementVisible(WebElement element, int timeoutInSeconds) {
     return waitFor(ExpectedConditions.visibilityOf(element), timeoutInSeconds) != null;
   }
 
   /**
-   * Espera a que un elemento sea visible usando el tiempo por defecto.
+   * Waits until an element becomes visible using the default timeout.
    *
-   * @param element elemento a observar
-   * @return {@code true} si el elemento se hizo visible
+   * @param element element to observe
+   * @return {@code true} if the element became visible
    */
   public static boolean isTheElementVisible(WebElement element) {
     return isTheElementVisible(element, WAIT_EXPLICIT);
   }
 
   /**
-   * Espera a que un elemento esté habilitado para recibir un clic.
+   * Waits until an element is ready to receive a click.
    *
-   * @param element          elemento a observar
-   * @param timeoutInSeconds segundos máximos de espera
-   * @return {@code true} si el elemento quedó disponible para interactuar
+   * @param element          element to observe
+   * @param timeoutInSeconds maximum seconds to wait
+   * @return {@code true} if the element became clickable
    */
   public static boolean isTheElementClickable(WebElement element, int timeoutInSeconds) {
     return waitFor(ExpectedConditions.elementToBeClickable(element), timeoutInSeconds) != null;
   }
 
   /**
-   * Espera a que un elemento desaparezca de la vista.
+   * Waits until an element disappears from the view.
    *
-   * @param element          elemento a observar
-   * @param timeoutInSeconds segundos máximos de espera
-   * @return {@code true} si el elemento dejó de ser visible
+   * @param element          element to observe
+   * @param timeoutInSeconds maximum seconds to wait
+   * @return {@code true} if the element stopped being visible
    */
   public static boolean isTheElementInvisible(WebElement element, int timeoutInSeconds) {
     return Boolean.TRUE.equals(
@@ -78,23 +78,23 @@ public class WaitActions {
   }
 
   /**
-   * Espera a que una lista de elementos tenga al menos un resultado visible.
+   * Waits until every element of a list becomes visible.
    *
-   * @param elements         lista a observar
-   * @param timeoutInSeconds segundos máximos de espera
-   * @return {@code true} si la lista se pobló dentro del tiempo indicado
+   * @param elements         list to observe
+   * @param timeoutInSeconds maximum seconds to wait
+   * @return {@code true} if the list was populated within the given time
    */
   public static boolean areTheElementsVisible(List<WebElement> elements, int timeoutInSeconds) {
     return waitFor(ExpectedConditions.visibilityOfAllElements(elements), timeoutInSeconds) != null;
   }
 
   /**
-   * Espera a que un elemento contenga el texto indicado.
+   * Waits until an element contains the given text.
    *
-   * @param element          elemento a observar
-   * @param expectedText     texto que debe aparecer
-   * @param timeoutInSeconds segundos máximos de espera
-   * @return {@code true} si el texto apareció dentro del tiempo indicado
+   * @param element          element to observe
+   * @param expectedText     text that must show up
+   * @param timeoutInSeconds maximum seconds to wait
+   * @return {@code true} if the text showed up within the given time
    */
   public static boolean hasTheElementText(WebElement element, String expectedText,
                                           int timeoutInSeconds) {
@@ -104,11 +104,11 @@ public class WaitActions {
   }
 
   /**
-   * Espera a que la dirección del navegador contenga el fragmento indicado.
+   * Waits until the browser address contains the given fragment.
    *
-   * @param urlFragment      fragmento que debe aparecer en la URL
-   * @param timeoutInSeconds segundos máximos de espera
-   * @return {@code true} si la URL contuvo el fragmento dentro del tiempo indicado
+   * @param urlFragment      fragment that must show up in the URL
+   * @param timeoutInSeconds maximum seconds to wait
+   * @return {@code true} if the URL contained the fragment within the given time
    */
   public static boolean isTheUrlContaining(String urlFragment, int timeoutInSeconds) {
     return Boolean.TRUE.equals(
@@ -123,7 +123,7 @@ public class WaitActions {
         .ignoring(StaleElementReferenceException.class)
         .until(condition);
     } catch (TimeoutException | NoSuchElementException exception) {
-      log.debug("La condición no se cumplió en {} segundos", timeoutInSeconds);
+      log.debug("The condition was not met within {} seconds", timeoutInSeconds);
       return null;
     } finally {
       setImplicitWait(driver, WAIT_IMPLICIT);

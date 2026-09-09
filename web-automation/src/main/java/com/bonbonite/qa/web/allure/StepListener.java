@@ -7,15 +7,15 @@ import io.qameta.allure.model.Status;
 import io.qameta.allure.model.StepResult;
 
 /**
- * Captura evidencia automáticamente al cerrar cada paso.
+ * Captures evidence automatically when each step closes.
  *
- * <p>Se engancha al ciclo de vida de Allure, de modo que ninguna task ni question
- * tiene que acordarse de tomar una captura: cualquier paso que termine en fallo o en
- * error deja su imagen y el HTML de la página en el reporte.</p>
+ * <p>It hooks into the Allure lifecycle, so no task or question has to remember to
+ * take a screenshot: any step ending in failure or error leaves its image and the
+ * page HTML in the report.</p>
  *
- * <p>Allure lo descubre mediante el archivo de servicio
- * {@code META-INF/services/io.qameta.allure.listener.StepLifecycleListener}. Sin ese
- * archivo la clase se compila pero nunca se invoca.</p>
+ * <p>Allure discovers it through the service file
+ * {@code META-INF/services/io.qameta.allure.listener.StepLifecycleListener}. Without
+ * that file the class compiles but is never invoked.</p>
  */
 public class StepListener implements StepLifecycleListener {
 
