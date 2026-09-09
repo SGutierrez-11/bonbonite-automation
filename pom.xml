@@ -13,6 +13,7 @@
     <modules>
         <module>api-automation</module>
         <module>web-automation</module>
+        <module>runner</module>
     </modules>
 
     <properties>

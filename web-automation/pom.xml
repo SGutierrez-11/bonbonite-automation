@@ -27,24 +27,17 @@
             <artifactId>selenium-java</artifactId>
         </dependency>
 
-        <!-- BDD y motor de ejecucion -->
+        <!-- Anotaciones de hooks y step definitions. El motor de ejecucion
+             (cucumber-testng) vive en el modulo runner. -->
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-java</artifactId>
         </dependency>
-        <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-testng</artifactId>
-        </dependency>
+
+        <!-- Aserciones suaves y listeners; la ejecucion la dispara el runner -->
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-        </dependency>
-
-        <!-- Reportes -->
-        <dependency>
-            <groupId>io.qameta.allure</groupId>
-            <artifactId>allure-cucumber7-jvm</artifactId>
         </dependency>
         <dependency>
             <groupId>io.qameta.allure</groupId>
@@ -57,18 +50,5 @@
             <artifactId>lombok</artifactId>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>io.qameta.allure</groupId>
-                <artifactId>allure-maven</artifactId>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>
