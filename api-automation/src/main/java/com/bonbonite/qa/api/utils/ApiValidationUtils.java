@@ -6,26 +6,26 @@ import java.util.List;
 import lombok.experimental.UtilityClass;
 
 /**
- * Verificaciones comunes sobre las respuestas de los servicios.
+ * Common checks on service responses.
  *
- * <p>Un servicio que no responde lo esperado es un problema de precondición, no un
- * defecto funcional del sitio. Por eso estas comprobaciones lanzan la excepción del
- * framework en lugar de fallar una aserción: el escenario se reporta como roto y no
- * como fallido, y quien lea el reporte distingue de inmediato un ambiente caído de
- * un error del producto.</p>
+ * <p>A service that does not answer as expected is a precondition problem, not a
+ * functional defect of the site. That is why these checks throw the framework
+ * exception instead of failing an assertion: the scenario is reported as broken
+ * rather than failed, and whoever reads the report immediately tells a down
+ * environment apart from a product error.</p>
  */
 @UtilityClass
 public class ApiValidationUtils {
 
   /**
-   * Verifica el código de estado y convierte el cuerpo en un objeto.
+   * Validates the status code and converts the body into an object.
    *
-   * @param response       respuesta a validar
-   * @param type           clase destino de la conversión
-   * @param expectedStatus código de estado esperado
-   * @param <T>            tipo del objeto resultante
-   * @return cuerpo de la respuesta convertido al tipo indicado
-   * @throws CustomException si el código de estado no es el esperado
+   * @param response       response to validate
+   * @param type           target class of the conversion
+   * @param expectedStatus expected status code
+   * @param <T>            type of the resulting object
+   * @return the response body converted into the given type
+   * @throws CustomException if the status code is not the expected one
    */
   public static <T> T validateAndDeserialize(Response response, Class<T> type,
                                              int expectedStatus) {
@@ -34,14 +34,14 @@ public class ApiValidationUtils {
   }
 
   /**
-   * Verifica el código de estado y convierte el cuerpo en una lista de objetos.
+   * Validates the status code and converts the body into a list of objects.
    *
-   * @param response       respuesta a validar
-   * @param type           clase de los elementos de la lista
-   * @param expectedStatus código de estado esperado
-   * @param <T>            tipo de los elementos
-   * @return cuerpo de la respuesta convertido en lista
-   * @throws CustomException si el código de estado no es el esperado
+   * @param response       response to validate
+   * @param type           class of the list elements
+   * @param expectedStatus expected status code
+   * @param <T>            type of the elements
+   * @return the response body converted into a list
+   * @throws CustomException if the status code is not the expected one
    */
   public static <T> List<T> validateAndDeserializeList(Response response, Class<T> type,
                                                        int expectedStatus) {
@@ -50,11 +50,11 @@ public class ApiValidationUtils {
   }
 
   /**
-   * Verifica que la respuesta tenga el código de estado esperado.
+   * Validates that the response carries the expected status code.
    *
-   * @param response       respuesta a validar
-   * @param expectedStatus código de estado esperado
-   * @throws CustomException si el código de estado no coincide
+   * @param response       response to validate
+   * @param expectedStatus expected status code
+   * @throws CustomException if the status code does not match
    */
   public static void validateStatus(Response response, int expectedStatus) {
     if (response.getStatusCode() != expectedStatus) {

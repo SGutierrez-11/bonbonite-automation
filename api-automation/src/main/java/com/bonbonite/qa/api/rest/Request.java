@@ -13,13 +13,13 @@ import io.restassured.specification.RequestSpecification;
 import java.util.Map;
 
 /**
- * Envoltorio sobre REST Assured que centraliza la construcción de peticiones.
+ * Wrapper over REST Assured that centralizes how requests are built.
  *
- * <p>Existe para que los servicios no dependan directamente de la API de REST
- * Assured: aquí se aplican de una sola vez el filtro que publica cada petición en
- * el reporte de Allure, el enmascaramiento de las cabeceras sensibles y el registro
- * en consola. Cambiar el cliente HTTP o la política de trazas se hace en esta clase
- * y no en las decenas de servicios que la usan.</p>
+ * <p>It exists so services do not depend on the REST Assured API directly: the
+ * filter that publishes every call into the Allure report, the masking of sensitive
+ * headers and the console logging are applied once here. Changing the HTTP client or
+ * the tracing policy is done in this class instead of in every service that uses
+ * it.</p>
  */
 public class Request {
 
@@ -28,7 +28,7 @@ public class Request {
   private final RequestSpecification specification;
 
   /**
-   * Crea una petición con las trazas y filtros por defecto del framework.
+   * Creates a request with the default filters and tracing of the framework.
    */
   public Request() {
     LogConfig logConfig = LogConfig.logConfig()
@@ -45,10 +45,10 @@ public class Request {
   }
 
   /**
-   * Define la URI base del servicio.
+   * Sets the base URI of the service.
    *
-   * @param baseUri esquema y dominio del servicio
-   * @return la misma petición, para encadenar
+   * @param baseUri scheme and domain of the service
+   * @return this request, for chaining
    */
   public Request baseUri(String baseUri) {
     specification.baseUri(baseUri);
@@ -56,10 +56,10 @@ public class Request {
   }
 
   /**
-   * Define la ruta común que antecede al recurso.
+   * Sets the path shared by every resource of the service.
    *
-   * @param basePath segmento de ruta previo al recurso
-   * @return la misma petición, para encadenar
+   * @param basePath path segment placed before the resource
+   * @return this request, for chaining
    */
   public Request basePath(String basePath) {
     specification.basePath(basePath);
@@ -67,10 +67,10 @@ public class Request {
   }
 
   /**
-   * Define el tipo de contenido de la petición.
+   * Sets the content type of the request.
    *
-   * @param contentType tipo de contenido
-   * @return la misma petición, para encadenar
+   * @param contentType content type to send
+   * @return this request, for chaining
    */
   public Request contentType(ContentType contentType) {
     specification.contentType(contentType);
@@ -78,11 +78,11 @@ public class Request {
   }
 
   /**
-   * Agrega una cabecera.
+   * Adds a header.
    *
-   * @param name  nombre de la cabecera
-   * @param value valor de la cabecera
-   * @return la misma petición, para encadenar
+   * @param name  header name
+   * @param value header value
+   * @return this request, for chaining
    */
   public Request header(String name, String value) {
     specification.header(name, value);
@@ -90,21 +90,21 @@ public class Request {
   }
 
   /**
-   * Agrega la cabecera de autorización con un token de tipo bearer.
+   * Adds the authorization header with a bearer token.
    *
-   * @param token token de acceso
-   * @return la misma petición, para encadenar
+   * @param token access token
+   * @return this request, for chaining
    */
   public Request bearerAuth(String token) {
     return header(AUTHORIZATION_HEADER, "Bearer " + token);
   }
 
   /**
-   * Agrega un parámetro de consulta.
+   * Adds a query parameter.
    *
-   * @param name  nombre del parámetro
-   * @param value valor del parámetro
-   * @return la misma petición, para encadenar
+   * @param name  parameter name
+   * @param value parameter value
+   * @return this request, for chaining
    */
   public Request queryParam(String name, Object value) {
     specification.queryParam(name, value);
@@ -112,10 +112,10 @@ public class Request {
   }
 
   /**
-   * Agrega varios parámetros de consulta.
+   * Adds several query parameters at once.
    *
-   * @param params pares nombre-valor a incluir en la URL
-   * @return la misma petición, para encadenar
+   * @param params name value pairs to append to the URL
+   * @return this request, for chaining
    */
   public Request queryParams(Map<String, ?> params) {
     specification.queryParams(params);
@@ -123,11 +123,11 @@ public class Request {
   }
 
   /**
-   * Agrega un parámetro de ruta.
+   * Adds a path parameter.
    *
-   * @param name  nombre del marcador en la ruta
-   * @param value valor que lo reemplaza
-   * @return la misma petición, para encadenar
+   * @param name  placeholder name in the path
+   * @param value value that replaces it
+   * @return this request, for chaining
    */
   public Request pathParam(String name, Object value) {
     specification.pathParam(name, value);
@@ -135,10 +135,10 @@ public class Request {
   }
 
   /**
-   * Define el cuerpo de la petición. El objeto se serializa a JSON.
+   * Sets the request body. The object is serialized to JSON.
    *
-   * @param body objeto a enviar como cuerpo
-   * @return la misma petición, para encadenar
+   * @param body object to send as the body
+   * @return this request, for chaining
    */
   public Request body(Object body) {
     specification.body(body);
@@ -146,50 +146,50 @@ public class Request {
   }
 
   /**
-   * Ejecuta una petición GET sobre el recurso indicado.
+   * Performs a GET call on the given resource.
    *
-   * @param path ruta del recurso
-   * @return respuesta del servicio
+   * @param path resource path
+   * @return the service response
    */
   public Response get(String path) {
     return send(Method.GET, path);
   }
 
   /**
-   * Ejecuta una petición POST sobre el recurso indicado.
+   * Performs a POST call on the given resource.
    *
-   * @param path ruta del recurso
-   * @return respuesta del servicio
+   * @param path resource path
+   * @return the service response
    */
   public Response post(String path) {
     return send(Method.POST, path);
   }
 
   /**
-   * Ejecuta una petición PUT sobre el recurso indicado.
+   * Performs a PUT call on the given resource.
    *
-   * @param path ruta del recurso
-   * @return respuesta del servicio
+   * @param path resource path
+   * @return the service response
    */
   public Response put(String path) {
     return send(Method.PUT, path);
   }
 
   /**
-   * Ejecuta una petición PATCH sobre el recurso indicado.
+   * Performs a PATCH call on the given resource.
    *
-   * @param path ruta del recurso
-   * @return respuesta del servicio
+   * @param path resource path
+   * @return the service response
    */
   public Response patch(String path) {
     return send(Method.PATCH, path);
   }
 
   /**
-   * Ejecuta una petición DELETE sobre el recurso indicado.
+   * Performs a DELETE call on the given resource.
    *
-   * @param path ruta del recurso
-   * @return respuesta del servicio
+   * @param path resource path
+   * @return the service response
    */
   public Response delete(String path) {
     return send(Method.DELETE, path);

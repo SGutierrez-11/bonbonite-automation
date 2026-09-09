@@ -5,12 +5,12 @@ import java.util.List;
 import lombok.Getter;
 
 /**
- * Envoltorio sobre la respuesta de REST Assured.
+ * Wrapper over the REST Assured response.
  *
- * <p>Expone únicamente lo que el framework necesita —código de estado, cuerpo y
- * deserialización— y concentra el manejo de errores de conversión en un solo lugar,
- * de modo que un contrato inesperado produzca un mensaje entendible en vez de una
- * excepción de la librería.</p>
+ * <p>It exposes only what the framework needs — status code, body and
+ * deserialization — and concentrates conversion error handling in a single place, so
+ * that an unexpected contract produces a readable message instead of a library
+ * stack trace.</p>
  */
 @Getter
 public class Response {
@@ -18,39 +18,39 @@ public class Response {
   private final io.restassured.response.Response response;
 
   /**
-   * Envuelve la respuesta devuelta por el cliente HTTP.
+   * Wraps the response returned by the HTTP client.
    *
-   * @param response respuesta original de REST Assured
+   * @param response original REST Assured response
    */
   public Response(io.restassured.response.Response response) {
     this.response = response;
   }
 
   /**
-   * Devuelve el código de estado HTTP.
+   * Returns the HTTP status code.
    *
-   * @return código de estado de la respuesta
+   * @return the response status code
    */
   public int getStatusCode() {
     return response.getStatusCode();
   }
 
   /**
-   * Devuelve el cuerpo de la respuesta sin procesar.
+   * Returns the raw response body.
    *
-   * @return cuerpo como cadena de texto
+   * @return the body as text
    */
   public String getBodyAsString() {
     return response.getBody().asString();
   }
 
   /**
-   * Convierte el cuerpo de la respuesta en un objeto del tipo indicado.
+   * Converts the response body into an object of the given type.
    *
-   * @param type clase destino de la conversión
-   * @param <T>  tipo del objeto resultante
-   * @return objeto deserializado a partir del cuerpo
-   * @throws CustomException si el cuerpo no corresponde al tipo esperado
+   * @param type target class of the conversion
+   * @param <T>  type of the resulting object
+   * @return the object deserialized from the body
+   * @throws CustomException if the body does not match the expected type
    */
   public <T> T as(Class<T> type) {
     try {
@@ -63,12 +63,12 @@ public class Response {
   }
 
   /**
-   * Convierte el cuerpo de la respuesta en una lista de objetos del tipo indicado.
+   * Converts the response body into a list of objects of the given type.
    *
-   * @param type clase de los elementos de la lista
-   * @param <T>  tipo de los elementos
-   * @return lista deserializada a partir del cuerpo
-   * @throws CustomException si el cuerpo no corresponde a una lista del tipo esperado
+   * @param type class of the list elements
+   * @param <T>  type of the elements
+   * @return the list deserialized from the body
+   * @throws CustomException if the body does not match a list of the expected type
    */
   public <T> List<T> asList(Class<T> type) {
     try {
