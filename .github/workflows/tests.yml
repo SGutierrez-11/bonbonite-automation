@@ -22,6 +22,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  PAGES_URL: https://sgutierrez-11.github.io/bonbonite-automation
+
 jobs:
 
   tests:
@@ -39,10 +42,6 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      # El sitio bajo prueba es el de producción de un tercero. En cada push solo
-      # se ejecuta el subconjunto @smoke, para no generar tráfico innecesario
-      # contra él; la regresión completa se lanza a demanda desde la pestaña
-      # Actions, eligiendo etiquetas y navegador.
       - name: Ejecutar la suite
         run: >
           ./mvnw -B clean test -pl runner -am
@@ -54,7 +53,22 @@ jobs:
           CUSTOMER_DOCUMENT: ${{ secrets.CUSTOMER_DOCUMENT }}
           CUSTOMER_PASSWORD: ${{ secrets.CUSTOMER_PASSWORD }}
 
-      - name: Publicar resultados de Allure
+      # Allure construye la gráfica de tendencia a partir del historial de la
+      # ejecución anterior. Se recupera del reporte ya publicado; si todavía no
+      # existe, el reporte se genera igual y solo pierde la tendencia.
+      - name: Recuperar el historial del reporte anterior
+        if: always()
+        run: |
+          mkdir -p runner/target/allure-results/history
+          for f in history.json history-trend.json categories-trend.json duration-trend.json retry-trend.json; do
+            curl -sfL "${PAGES_URL}/history/$f" -o "runner/target/allure-results/history/$f" || true
+          done
+
+      - name: Generar el reporte de Allure
+        if: always()
+        run: ./mvnw -B allure:report -pl runner
+
+      - name: Publicar los resultados como artefacto
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -62,10 +76,30 @@ jobs:
           path: runner/target/allure-results
           retention-days: 14
 
-      - name: Publicar reporte de Cucumber
+      - name: Preparar el reporte para GitHub Pages
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-pages-artifact@v3
         with:
-          name: cucumber-report
-          path: runner/target/cucumber
-          retention-days: 14
+          path: runner/target/site/allure-maven-plugin
+
+  publish:
+    name: Publicar el reporte
+    needs: tests
+    if: always() && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+
+    steps:
+      - uses: actions/configure-pages@v5
+
+      - id: deploy
+        uses: actions/deploy-pages@v4

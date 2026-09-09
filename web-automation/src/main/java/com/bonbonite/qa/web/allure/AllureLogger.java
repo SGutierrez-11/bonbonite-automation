@@ -8,9 +8,11 @@ import com.bonbonite.qa.web.pages.WebBaseScreen;
 import io.qameta.allure.Allure;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import lombok.experimental.UtilityClass;
@@ -69,6 +71,29 @@ public class AllureLogger {
         new ByteArrayInputStream(driver.getPageSource().getBytes(StandardCharsets.UTF_8)), ".html");
     } catch (Exception exception) {
       log.warn("Could not attach the page state: {}", exception.getMessage());
+    }
+  }
+
+  /**
+   * Copies the failure categories definition into the results directory.
+   *
+   * <p>Allure only picks up {@code categories.json} when it sits next to the results,
+   * not from the classpath. Copying it here keeps the classification working both
+   * locally and on continuous integration, without duplicating the file.</p>
+   */
+  public static void copyCategories() {
+    ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+    try (InputStream categories = classLoader.getResourceAsStream("categories.json")) {
+      if (categories == null) {
+        log.warn("categories.json was not found on the classpath");
+        return;
+      }
+      Path directory = Path.of(RESULTS_DIRECTORY);
+      Files.createDirectories(directory);
+      Files.copy(categories, directory.resolve("categories.json"),
+        StandardCopyOption.REPLACE_EXISTING);
+    } catch (IOException exception) {
+      log.warn("Could not copy the report categories: {}", exception.getMessage());
     }
   }
 

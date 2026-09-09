@@ -33,6 +33,7 @@ public class Hooks {
   @BeforeAll
   public static void reportEnvironment() {
     AllureLogger.writeEnvironmentInfo();
+    AllureLogger.copyCategories();
   }
 
   /**
