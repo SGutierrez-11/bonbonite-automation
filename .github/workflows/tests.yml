@@ -5,12 +5,15 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  # 12:00 UTC equivale a las 07:00 en Colombia (UTC-5).
+  schedule:
+    - cron: '0 12 * * *'
   workflow_dispatch:
     inputs:
       tags:
         description: 'Filtro de etiquetas de Cucumber'
         required: false
-        default: '@smoke'
+        default: 'not @wip'
       browser:
         description: 'Navegador'
         required: false
@@ -24,13 +27,57 @@ concurrency:
 
 env:
   PAGES_URL: https://sgutierrez-11.github.io/bonbonite-automation
+  # Fecha en la que termina la ventana de ejecucion diaria acordada.
+  SCHEDULE_END_DATE: '2026-09-16'
 
 jobs:
 
+  planificacion:
+    name: Planificación de la corrida
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      ejecutar: ${{ steps.plan.outputs.ejecutar }}
+      tags: ${{ steps.plan.outputs.tags }}
+      hilos: ${{ steps.plan.outputs.hilos }}
+    steps:
+      # GitHub no permite ponerle fecha de fin a un cron, asi que la ventana se
+      # controla aqui. Pasado el 16 de septiembre la corrida programada se omite
+      # sola y deja de consumir minutos; las corridas manuales y por push siguen
+      # funcionando.
+      - name: Decidir alcance y vigencia
+        id: plan
+        run: |
+          hoy=$(date -u +%Y-%m-%d)
+          evento="${{ github.event_name }}"
+
+          if [ "$evento" = "schedule" ] && [ "$hoy" \> "$SCHEDULE_END_DATE" ]; then
+            echo "La ventana de ejecucion diaria termino el $SCHEDULE_END_DATE. Se omite la corrida."
+            echo "ejecutar=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # La corrida programada recorre toda la suite, pero en secuencial. El
+          # sitio bajo prueba es de produccion y responde 403 cuando detecta
+          # trafico automatizado concurrente, asi que un solo hilo reduce el
+          # riesgo de que el WAF bloquee la ejecucion.
+          case "$evento" in
+            schedule)          tags='not @wip'; hilos=1 ;;
+            workflow_dispatch) tags='${{ github.event.inputs.tags }}'; hilos=1 ;;
+            *)                 tags='@smoke';   hilos=1 ;;
+          esac
+
+          echo "Evento: $evento | Fecha: $hoy | Etiquetas: $tags | Hilos: $hilos"
+          echo "ejecutar=true" >> "$GITHUB_OUTPUT"
+          echo "tags=$tags" >> "$GITHUB_OUTPUT"
+          echo "hilos=$hilos" >> "$GITHUB_OUTPUT"
+
   tests:
     name: Suite web
+    needs: planificacion
+    if: needs.planificacion.outputs.ejecutar == 'true'
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
+    timeout-minutes: 45
 
     steps:
       - uses: actions/checkout@v4
@@ -46,15 +93,15 @@ jobs:
         run: >
           ./mvnw -B clean test -pl runner -am
           -Dheadless.mode=true
-          -DthreadCount=2
-          "-Dcucumber.filter.tags=${{ github.event.inputs.tags || '@smoke' }}"
+          -DthreadCount=${{ needs.planificacion.outputs.hilos }}
+          "-Dcucumber.filter.tags=${{ needs.planificacion.outputs.tags }}"
           -Dbrowser.name=${{ github.event.inputs.browser || 'chrome' }}
         env:
           CUSTOMER_DOCUMENT: ${{ secrets.CUSTOMER_DOCUMENT }}
           CUSTOMER_PASSWORD: ${{ secrets.CUSTOMER_PASSWORD }}
 
-      # Allure construye la gráfica de tendencia a partir del historial de la
-      # ejecución anterior. Se recupera del reporte ya publicado; si todavía no
+      # Allure construye la grafica de tendencia a partir del historial de la
+      # ejecucion anterior. Se recupera del reporte ya publicado; si todavia no
       # existe, el reporte se genera igual y solo pierde la tendencia.
       - name: Recuperar el historial del reporte anterior
         if: always()
@@ -85,7 +132,7 @@ jobs:
   publish:
     name: Publicar el reporte
     needs: tests
-    if: always() && github.ref == 'refs/heads/main'
+    if: always() && needs.tests.result != 'skipped' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-24.04
     timeout-minutes: 10
 
