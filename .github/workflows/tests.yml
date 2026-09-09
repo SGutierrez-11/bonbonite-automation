@@ -1,0 +1,71 @@
+name: Pruebas automatizadas
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      tags:
+        description: 'Filtro de etiquetas de Cucumber'
+        required: false
+        default: '@smoke'
+      browser:
+        description: 'Navegador'
+        required: false
+        default: 'chrome'
+        type: choice
+        options: [chrome, firefox]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+
+  tests:
+    name: Suite web
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configurar JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      # El sitio bajo prueba es el de producción de un tercero. En cada push solo
+      # se ejecuta el subconjunto @smoke, para no generar tráfico innecesario
+      # contra él; la regresión completa se lanza a demanda desde la pestaña
+      # Actions, eligiendo etiquetas y navegador.
+      - name: Ejecutar la suite
+        run: >
+          ./mvnw -B clean test -pl runner -am
+          -Dheadless.mode=true
+          -DthreadCount=2
+          "-Dcucumber.filter.tags=${{ github.event.inputs.tags || '@smoke' }}"
+          -Dbrowser.name=${{ github.event.inputs.browser || 'chrome' }}
+        env:
+          CUSTOMER_DOCUMENT: ${{ secrets.CUSTOMER_DOCUMENT }}
+          CUSTOMER_PASSWORD: ${{ secrets.CUSTOMER_PASSWORD }}
+
+      - name: Publicar resultados de Allure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results
+          path: runner/target/allure-results
+          retention-days: 14
+
+      - name: Publicar reporte de Cucumber
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cucumber-report
+          path: runner/target/cucumber
+          retention-days: 14
