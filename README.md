@@ -1,5 +1,7 @@
 # Bonbonite Automation
 
+[![Pruebas automatizadas](https://github.com/SGutierrez-11/bonbonite-automation/actions/workflows/tests.yml/badge.svg)](https://github.com/SGutierrez-11/bonbonite-automation/actions/workflows/tests.yml)
+
 Framework de automatización de pruebas para el sitio e-commerce de Bon-bonite
 (`https://www.bon-bonite.com/`).
 
@@ -114,6 +116,41 @@ Para bajar todo:
 ```bash
 docker compose -f docker/docker-compose.yml --profile video --profile suite down -v
 ```
+
+## Integración continua
+
+El workflow `.github/workflows/tests.yml` se ejecuta en cada push a `main` y en cada
+pull request, con el navegador en modo sin interfaz y dos hilos. Publica como
+artefactos los resultados de Allure y el reporte de Cucumber, con `if: always()`
+para que también queden disponibles cuando la suite falla — que es justo cuando más
+se necesitan.
+
+**En automático solo corre el subconjunto `@smoke`.** El sitio bajo prueba es el de
+producción de un tercero y no corresponde generarle tráfico en cada commit. La
+regresión completa se lanza a demanda desde la pestaña *Actions*, eligiendo
+etiquetas y navegador.
+
+Las credenciales del usuario de pruebas se inyectan desde *Settings → Secrets and
+variables → Actions* como `CUSTOMER_DOCUMENT` y `CUSTOMER_PASSWORD`. No hay ningún
+dato sensible en el repositorio.
+
+## Configuración sensible
+
+El proyecto nunca versiona credenciales. Las llaves existen vacías en
+`runner/src/test/resources/config/web.prod.properties` a modo de documentación, y el
+valor se entrega por variable de entorno:
+
+```bash
+setx CUSTOMER_DOCUMENT "<numero de cedula>"
+```
+
+```bash
+setx CUSTOMER_PASSWORD "<contrasena>"
+```
+
+El `PropertiesManager` resuelve cada parámetro buscando primero en variables de
+entorno, luego en parámetros de ejecución y por último en el archivo, de modo que la
+misma suite corre en local, en Docker y en integración continua sin cambiar código.
 
 ### Por qué Grid y no otra opción
 
