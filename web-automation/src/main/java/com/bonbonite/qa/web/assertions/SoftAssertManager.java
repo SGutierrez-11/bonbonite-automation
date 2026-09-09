@@ -5,15 +5,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.testng.asserts.SoftAssert;
 
 /**
- * Administra las aserciones suaves de cada escenario.
+ * Manages the soft assertions of each scenario.
  *
- * <p>Una question que valida cinco campos de una pantalla debe reportar los cinco
- * resultados, no detenerse en el primero que falle: quien lea el reporte necesita
- * ver el alcance completo del defecto. Las validaciones se acumulan aquí durante el
- * escenario y el hook de cierre invoca {@link #assertAll()} para consolidarlas.</p>
+ * <p>A question that validates five fields of a screen must report the five results
+ * instead of stopping at the first failure: whoever reads the report needs to see
+ * the full extent of the defect. Validations pile up here during the scenario and
+ * the teardown hook calls {@link #assertAll()} to consolidate them.</p>
  *
- * <p>Se mantiene una instancia por hilo para que la ejecución en paralelo no mezcle
- * los resultados de escenarios distintos.</p>
+ * <p>One instance per thread is kept so that parallel execution does not mix the
+ * results of different scenarios.</p>
  */
 @Slf4j
 @UtilityClass
@@ -23,20 +23,20 @@ public class SoftAssertManager {
     ThreadLocal.withInitial(SoftAssert::new);
 
   /**
-   * Devuelve el acumulador de aserciones del hilo actual.
+   * Returns the assertion collector of the current thread.
    *
-   * @return instancia sobre la que se registran las validaciones
+   * @return the instance validations are registered on
    */
   public static SoftAssert getSoftAssert() {
     return SOFT_ASSERT.get();
   }
 
   /**
-   * Consolida las validaciones acumuladas y libera el acumulador del hilo.
+   * Consolidates the accumulated validations and releases the thread collector.
    *
-   * <p>Si alguna falló, lanza el error con el detalle de todas para que el escenario
-   * se marque como fallido. El acumulador se libera en cualquier caso, de modo que
-   * el siguiente escenario del mismo hilo empiece limpio.</p>
+   * <p>If any of them failed, it throws the error with the detail of all of them so
+   * the scenario is marked as failed. The collector is released either way, so the
+   * next scenario on the same thread starts clean.</p>
    */
   public static void assertAll() {
     SoftAssert softAssert = SOFT_ASSERT.get();

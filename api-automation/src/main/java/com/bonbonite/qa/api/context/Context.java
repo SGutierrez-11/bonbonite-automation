@@ -6,15 +6,15 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Almacén de datos clave-valor que comparten los pasos de un escenario.
+ * Key value store shared by the steps of a scenario.
  *
- * <p>Reemplaza el uso de campos estáticos mutables para pasar información entre
- * step definitions: un paso guarda el usuario que registró y otro, varios pasos
- * después, lo recupera para validar la interfaz. Al no haber estado estático, la
- * ejecución en paralelo es segura.</p>
+ * <p>It replaces mutable static fields as the way to pass information between step
+ * definitions: one step stores the customer it registered and another one, several
+ * steps later, reads it back to validate the interface. With no static state,
+ * parallel execution is safe.</p>
  *
- * <p>Las llaves deben provenir siempre de una enum, nunca de cadenas sueltas, para
- * que el compilador detecte los errores de escritura.</p>
+ * <p>Keys must always come from an enum, never from loose strings, so that the
+ * compiler catches typos.</p>
  */
 public class Context {
 
@@ -25,29 +25,29 @@ public class Context {
   }
 
   /**
-   * Crea un contexto apto para ser leído y escrito desde varios hilos.
+   * Creates a context that can be read and written from several threads.
    *
-   * @return contexto respaldado por un mapa concurrente
+   * @return a context backed by a concurrent map
    */
   public static Context threadSafeContext() {
     return new Context(new ConcurrentHashMap<>());
   }
 
   /**
-   * Crea un contexto para uso dentro de un solo hilo.
+   * Creates a context meant to be used within a single thread.
    *
-   * @return contexto respaldado por un mapa simple
+   * @return a context backed by a plain map
    */
   public static Context nonThreadSafeContext() {
     return new Context(new HashMap<>());
   }
 
   /**
-   * Almacena un valor bajo la llave indicada.
+   * Stores a value under the given key.
    *
-   * @param key   llave con la que se recuperará el valor
-   * @param value valor a almacenar
-   * @throws CustomException si el valor es nulo
+   * @param key   key the value will be retrieved with
+   * @param value value to store
+   * @throws CustomException if the value is null
    */
   public void set(String key, Object value) {
     if (value == null) {
@@ -57,12 +57,12 @@ public class Context {
   }
 
   /**
-   * Recupera el valor asociado a una llave.
+   * Retrieves the value bound to a key.
    *
-   * @param key llave a consultar
-   * @param <T> tipo esperado del valor almacenado
-   * @return valor asociado a la llave
-   * @throws CustomException si la llave no existe en el contexto
+   * @param key key to look up
+   * @param <T> expected type of the stored value
+   * @return the value bound to the key
+   * @throws CustomException if the key is not present in the context
    */
   @SuppressWarnings("unchecked")
   public <T> T get(String key) {
@@ -73,12 +73,12 @@ public class Context {
   }
 
   /**
-   * Recupera el valor asociado a una llave, o un valor por defecto si no existe.
+   * Retrieves the value bound to a key, or a default value when it is absent.
    *
-   * @param key          llave a consultar
-   * @param defaultValue valor a devolver cuando la llave no está presente
-   * @param <T>          tipo esperado del valor almacenado
-   * @return valor asociado a la llave, o {@code defaultValue}
+   * @param key          key to look up
+   * @param defaultValue value returned when the key is not present
+   * @param <T>          expected type of the stored value
+   * @return the value bound to the key, or {@code defaultValue}
    */
   @SuppressWarnings("unchecked")
   public <T> T getOrDefault(String key, T defaultValue) {
@@ -86,20 +86,20 @@ public class Context {
   }
 
   /**
-   * Indica si el contexto contiene un valor para la llave indicada.
+   * Tells whether the context holds a value for the given key.
    *
-   * @param key llave a verificar
-   * @return {@code true} si la llave está presente
+   * @param key key to check
+   * @return {@code true} when the key is present
    */
   public boolean containsKey(String key) {
     return data.containsKey(key);
   }
 
   /**
-   * Elimina el valor asociado a una llave.
+   * Removes the value bound to a key.
    *
-   * @param key llave a eliminar
-   * @throws CustomException si la llave no existe en el contexto
+   * @param key key to remove
+   * @throws CustomException if the key is not present in the context
    */
   public void remove(String key) {
     if (!data.containsKey(key)) {

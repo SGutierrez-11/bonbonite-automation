@@ -20,12 +20,12 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 
 /**
- * Adjunta evidencias al reporte de Allure.
+ * Attaches evidence to the Allure report.
  *
- * <p>Ningún método propaga excepciones: si la captura falla —porque el navegador ya
- * se cerró o la sesión se perdió— se registra el problema y la ejecución continúa.
- * Un fallo al recolectar evidencia nunca debe enmascarar el fallo real que se estaba
- * documentando.</p>
+ * <p>No method propagates exceptions: if capturing fails — because the browser was
+ * already closed or the session was lost — the problem is logged and execution goes
+ * on. A failure while collecting evidence must never mask the real failure it was
+ * documenting.</p>
  */
 @Slf4j
 @UtilityClass
@@ -34,9 +34,9 @@ public class AllureLogger {
   private static final String RESULTS_DIRECTORY = "target/allure-results";
 
   /**
-   * Adjunta una captura de la pantalla actual.
+   * Attaches a screenshot of the current screen.
    *
-   * @param name nombre con el que aparece el adjunto en el reporte
+   * @param name name the attachment gets in the report
    */
   public static void attachScreenshot(String name) {
     WebDriver driver = WebBaseScreen.getDriver();
@@ -47,15 +47,16 @@ public class AllureLogger {
       byte[] screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
       Allure.getLifecycle().addAttachment(name, "image/png", "png", screenshot);
     } catch (Exception exception) {
-      log.warn("No fue posible capturar la pantalla: {}", exception.getMessage());
+      log.warn("Could not capture the screen: {}", exception.getMessage());
     }
   }
 
   /**
-   * Adjunta el HTML de la página en el momento del fallo y la dirección actual.
+   * Attaches the page HTML at the moment of the failure together with the current
+   * address.
    *
-   * <p>Sirve para diagnosticar un localizador que dejó de encontrar su elemento sin
-   * tener que reproducir la ejecución.</p>
+   * <p>It allows diagnosing a locator that stopped finding its element without
+   * having to reproduce the execution.</p>
    */
   public static void attachPageSource() {
     WebDriver driver = WebBaseScreen.getDriver();
@@ -67,15 +68,15 @@ public class AllureLogger {
       Allure.addAttachment("HTML de la página", "text/html",
         new ByteArrayInputStream(driver.getPageSource().getBytes(StandardCharsets.UTF_8)), ".html");
     } catch (Exception exception) {
-      log.warn("No fue posible adjuntar el estado de la página: {}", exception.getMessage());
+      log.warn("Could not attach the page state: {}", exception.getMessage());
     }
   }
 
   /**
-   * Escribe el archivo de entorno que Allure muestra en la portada del reporte.
+   * Writes the environment file Allure displays on the report cover.
    *
-   * <p>Es lo primero que consulta quien revisa la evidencia para saber contra qué
-   * navegador y qué ambiente se ejecutó la suite.</p>
+   * <p>It is the first thing whoever reviews the evidence looks at, to know which
+   * browser and environment the suite ran against.</p>
    */
   public static void writeEnvironmentInfo() {
     Map<String, String> environment = new LinkedHashMap<>();
@@ -94,7 +95,7 @@ public class AllureLogger {
       Files.createDirectories(directory);
       Files.writeString(directory.resolve("environment.properties"), content.toString());
     } catch (IOException exception) {
-      log.warn("No fue posible escribir el entorno del reporte: {}", exception.getMessage());
+      log.warn("Could not write the report environment file: {}", exception.getMessage());
     }
   }
 }

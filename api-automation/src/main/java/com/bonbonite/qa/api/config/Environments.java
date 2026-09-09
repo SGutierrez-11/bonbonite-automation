@@ -6,12 +6,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * Entornos contra los que puede ejecutarse la automatización.
+ * Environments the automation can be executed against.
  *
- * <p>El sitio de Bon-bonite solo expone producción, de modo que hoy existe un
- * único valor. La enum se mantiene como punto de extensión: al aparecer un
- * ambiente de pruebas basta agregar la constante y su archivo de propiedades,
- * sin tocar el resto del framework.</p>
+ * <p>The Bon-bonite site only exposes production, so there is a single value today.
+ * The enum is kept as an extension point: when a testing environment appears, adding
+ * the constant and its properties file is enough, with no change to the rest of the
+ * framework.</p>
  */
 @Getter
 @AllArgsConstructor
@@ -22,11 +22,11 @@ public enum Environments {
   private final String name;
 
   /**
-   * Resuelve el entorno a partir de su nombre.
+   * Resolves an environment from its name.
    *
-   * @param name nombre del entorno, sin distinguir mayúsculas; puede ser nulo
-   * @return el entorno correspondiente, o {@link #PROD} si el nombre es nulo o vacío
-   * @throws CustomException si el nombre no corresponde a ningún entorno declarado
+   * @param name environment name, case insensitive; may be null
+   * @return the matching environment, or {@link #PROD} when the name is null or blank
+   * @throws CustomException if the name does not match any declared environment
    */
   public static Environments byName(String name) {
     if (name == null || name.isBlank()) {

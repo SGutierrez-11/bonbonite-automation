@@ -4,12 +4,15 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * Nombres legibles de los elementos de la interfaz.
+ * Human readable element names rendered in the execution report.
  *
- * <p>Cada acción y cada validación reciben una de estas descripciones, que es lo
- * que termina apareciendo en el reporte. Gracias a esto el paso se lee como
- * "Hacer clic en 'Botón iniciar sesión'" en lugar de mostrar un selector CSS, y
- * quien revise la evidencia no necesita conocer el código.</p>
+ * <p>Every action and every validation receives one of these descriptions, which is
+ * what ends up in the report. Thanks to that, a step reads as "Hacer clic en 'Botón
+ * iniciar sesión'" instead of showing a CSS selector, and whoever reviews the
+ * evidence does not need to know the code.</p>
+ *
+ * <p>The values are written in Spanish on purpose: they are business facing text,
+ * unlike the code around them.</p>
  */
 @Getter
 @AllArgsConstructor

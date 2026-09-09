@@ -11,20 +11,20 @@ import io.restassured.http.ContentType;
 import lombok.experimental.UtilityClass;
 
 /**
- * Recursos públicos del catálogo de productos.
+ * Public resources of the product catalog.
  *
- * <p>Los métodos de esta clase solo emiten la petición y devuelven la respuesta
- * sin interpretarla. La validación del código de estado y la conversión a objetos
- * del dominio son responsabilidad de la capa de tasks.</p>
+ * <p>Methods in this class only send the request and return the response without
+ * interpreting it. Validating the status code and converting the body into domain
+ * objects belongs to the task layer.</p>
  */
 @UtilityClass
 public class ProductService {
 
   /**
-   * Consulta los productos del catálogo.
+   * Queries the catalog products.
    *
-   * @param perPage cantidad máxima de productos a devolver
-   * @return respuesta del servicio
+   * @param perPage maximum number of products to return
+   * @return the service response
    */
   @Step("GET - /products")
   public static Response getProducts(int perPage) {
@@ -34,11 +34,11 @@ public class ProductService {
   }
 
   /**
-   * Consulta los productos de una categoría.
+   * Queries the products of a category.
    *
-   * @param categorySlug identificador de la categoría en la URL
-   * @param perPage      cantidad máxima de productos a devolver
-   * @return respuesta del servicio
+   * @param categorySlug category identifier used in the URL
+   * @param perPage      maximum number of products to return
+   * @return the service response
    */
   @Step("GET - /products?category={categorySlug}")
   public static Response getProductsByCategory(String categorySlug, int perPage) {
@@ -49,10 +49,10 @@ public class ProductService {
   }
 
   /**
-   * Consulta un producto por su identificador.
+   * Queries a product by its identifier.
    *
-   * @param productId identificador del producto
-   * @return respuesta del servicio
+   * @param productId product identifier
+   * @return the service response
    */
   @Step("GET - /products/{productId}")
   public static Response getProductById(long productId) {

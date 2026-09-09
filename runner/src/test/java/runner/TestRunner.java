@@ -5,15 +5,15 @@ import io.cucumber.testng.CucumberOptions;
 import org.testng.annotations.DataProvider;
 
 /**
- * Punto de entrada de la suite.
+ * Entry point of the suite.
  *
- * <p>El {@code glue} apunta al paquete raíz del proyecto para que Cucumber descubra
- * los hooks y los step definitions de todos los módulos de código, sin tener que
- * enumerarlos uno por uno cuando el monorepo crezca.</p>
+ * <p>The glue points at the project root package so Cucumber discovers the hooks and
+ * step definitions of every code module, without having to list them one by one as
+ * the monorepo grows.</p>
  *
- * <p>Sobrescribir el proveedor de datos con {@code parallel = true} es lo que habilita
- * la ejecución de escenarios en paralelo. El número de hilos lo controla Surefire con
- * la propiedad {@code threadCount}.</p>
+ * <p>Overriding the data provider with {@code parallel = true} is what enables
+ * running scenarios concurrently. The number of threads is controlled by Surefire
+ * through the {@code threadCount} property.</p>
  */
 @CucumberOptions(
   features = "src/test/resources/features",

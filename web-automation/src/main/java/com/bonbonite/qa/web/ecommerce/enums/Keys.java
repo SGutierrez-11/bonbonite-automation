@@ -1,10 +1,10 @@
 package com.bonbonite.qa.web.ecommerce.enums;
 
 /**
- * Llaves con las que los pasos almacenan y recuperan datos del contexto del escenario.
+ * Keys the steps use to store and retrieve data from the scenario context.
  *
- * <p>Usar constantes en lugar de cadenas sueltas hace que el compilador detecte los
- * errores de escritura y permite ver de un vistazo qué información viaja entre pasos.</p>
+ * <p>Using constants instead of loose strings lets the compiler catch typos and
+ * makes it possible to see at a glance which information travels between steps.</p>
  */
 public enum Keys {
 

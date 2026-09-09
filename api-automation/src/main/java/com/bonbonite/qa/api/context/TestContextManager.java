@@ -4,11 +4,11 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Da acceso al contexto del escenario en ejecución.
+ * Gives access to the context of the running scenario.
  *
- * <p>Mantiene una instancia de {@link Context} por hilo, de modo que cada escenario
- * trabaje con sus propios datos aunque la suite corra en paralelo. El hook de cierre
- * es responsable de invocar {@link #cleanTestContext()} al terminar el escenario.</p>
+ * <p>It keeps one {@link Context} instance per thread, so that every scenario works
+ * with its own data even when the suite runs in parallel. The teardown hook is
+ * responsible for calling {@link #cleanTestContext()} once the scenario ends.</p>
  */
 @Slf4j
 @UtilityClass
@@ -17,9 +17,9 @@ public class TestContextManager {
   private static final ThreadLocal<Context> TEST_CONTEXT = new ThreadLocal<>();
 
   /**
-   * Devuelve el contexto del hilo actual, creándolo si aún no existe.
+   * Returns the context of the current thread, creating it when it does not exist.
    *
-   * @return contexto del escenario en ejecución
+   * @return the context of the running scenario
    */
   public static Context getTestContext() {
     if (TEST_CONTEXT.get() == null) {
@@ -29,11 +29,11 @@ public class TestContextManager {
   }
 
   /**
-   * Descarta el contexto del hilo actual para que el siguiente escenario
-   * no herede datos del anterior.
+   * Discards the context of the current thread so the next scenario does not inherit
+   * data from the previous one.
    */
   public static void cleanTestContext() {
-    log.debug("Limpiando el contexto del escenario");
+    log.debug("Clearing the scenario context");
     TEST_CONTEXT.remove();
   }
 }

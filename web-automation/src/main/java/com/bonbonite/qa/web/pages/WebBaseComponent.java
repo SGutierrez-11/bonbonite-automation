@@ -3,17 +3,17 @@ package com.bonbonite.qa.web.pages;
 import org.openqa.selenium.support.PageFactory;
 
 /**
- * Clase base de los componentes reutilizables de la interfaz.
+ * Base class of the reusable interface components.
  *
- * <p>Un componente es un widget que aparece en varias pantallas —el banner de
- * cookies, el encabezado, el carrito lateral— y por eso no pertenece a ninguna en
- * particular. Hereda el manejo del driver de la pantalla base y vuelve a inicializar
- * Page Factory sobre sus propios campos.</p>
+ * <p>A component is a widget that shows up on several screens — the cookie banner,
+ * the header, the mini cart — and therefore belongs to none of them in particular.
+ * It inherits driver handling from the base screen and initializes Page Factory
+ * again over its own fields.</p>
  */
 public abstract class WebBaseComponent extends WebBaseScreen {
 
   /**
-   * Inicializa los localizadores declarados en el componente.
+   * Initializes the locators declared by the component.
    */
   protected WebBaseComponent() {
     super();

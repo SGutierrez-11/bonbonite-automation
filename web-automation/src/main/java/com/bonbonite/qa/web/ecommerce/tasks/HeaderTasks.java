@@ -19,16 +19,16 @@ import io.qameta.allure.Step;
 import org.openqa.selenium.WebElement;
 
 /**
- * Navegación desde el encabezado del sitio.
+ * Navigation from the site header.
  */
 public class HeaderTasks extends HeaderComponent {
 
   private static final int COUNTER_TIMEOUT = 5;
 
   /**
-   * Navega a una de las secciones del catálogo desde el menú principal.
+   * Navigates to one of the catalog sections from the main menu.
    *
-   * @param section sección a abrir
+   * @param section section to open
    */
   @Step("Navegar a la sección {section}")
   public void navigateToSection(StoreSection section) {
@@ -36,7 +36,7 @@ public class HeaderTasks extends HeaderComponent {
   }
 
   /**
-   * Abre la pantalla de cuenta desde el encabezado.
+   * Opens the account screen from the header.
    */
   @Step("Abrir mi cuenta")
   public void openAccount() {
@@ -44,7 +44,7 @@ public class HeaderTasks extends HeaderComponent {
   }
 
   /**
-   * Abre el carrito desde el encabezado.
+   * Opens the cart from the header.
    */
   @Step("Abrir el carrito")
   public void openCart() {
@@ -52,12 +52,12 @@ public class HeaderTasks extends HeaderComponent {
   }
 
   /**
-   * Devuelve la cantidad de productos que indica el encabezado.
+   * Returns the number of products the header badge shows.
    *
-   * <p>El sitio oculta la insignia del contador mientras el carrito está vacío, de
-   * modo que su ausencia no es un error sino la representación de cero productos.</p>
+   * <p>The site hides the counter badge while the cart is empty, so its absence is
+   * not an error but the representation of zero products.</p>
    *
-   * @return número de productos en el carrito
+   * @return the number of products in the cart
    */
   @Step("Consultar la cantidad de productos del carrito")
   public int getCartItemsCount() {

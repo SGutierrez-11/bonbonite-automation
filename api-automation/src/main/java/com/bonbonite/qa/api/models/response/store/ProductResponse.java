@@ -9,12 +9,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Producto del catálogo, tal como lo expone la Store API de la tienda.
+ * Catalog product as exposed by the Store API.
  *
- * <p>Solo se modelan los campos que la automatización necesita para elegir un
- * producto y validarlo en la interfaz. La anotación que ignora las propiedades
- * desconocidas es deliberada: el contrato del servicio devuelve muchos más campos
- * y puede crecer sin previo aviso, y eso no debe romper las pruebas.</p>
+ * <p>Only the fields the automation needs to pick a product and validate it on the
+ * interface are modelled. Ignoring unknown properties is deliberate: the service
+ * contract returns many more fields and may grow without notice, and that must not
+ * break the tests.</p>
  */
 @Data
 @Builder
@@ -42,7 +42,7 @@ public class ProductResponse {
   @JsonProperty("has_options")
   private boolean hasOptions;
 
-  /** Precios del producto y formato de la moneda con la que se muestran. */
+  /** Product prices and the formatting of the currency they are displayed with. */
   @Data
   @Builder
   @NoArgsConstructor
@@ -50,7 +50,7 @@ public class ProductResponse {
   @JsonIgnoreProperties(ignoreUnknown = true)
   public static class Prices {
 
-    /** Precio en la unidad mínima de la moneda, sin separadores. */
+    /** Price in the currency minor unit, with no separators. */
     private String price;
 
     @JsonProperty("regular_price")
@@ -69,7 +69,7 @@ public class ProductResponse {
     private String thousandSeparator;
   }
 
-  /** Categoría a la que pertenece el producto. */
+  /** Category the product belongs to. */
   @Data
   @Builder
   @NoArgsConstructor
@@ -82,7 +82,7 @@ public class ProductResponse {
     private String link;
   }
 
-  /** Atributo configurable del producto, por ejemplo color o talla. */
+  /** Configurable product attribute, such as colour or size. */
   @Data
   @Builder
   @NoArgsConstructor
@@ -99,7 +99,7 @@ public class ProductResponse {
     private boolean hasVariations;
   }
 
-  /** Valor posible de un atributo. */
+  /** Possible value of an attribute. */
   @Data
   @Builder
   @NoArgsConstructor
@@ -111,7 +111,7 @@ public class ProductResponse {
     private String slug;
   }
 
-  /** Combinación concreta de atributos que se puede agregar al carrito. */
+  /** Specific combination of attributes that can be added to the cart. */
   @Data
   @Builder
   @NoArgsConstructor
@@ -122,7 +122,7 @@ public class ProductResponse {
     private List<VariationAttribute> attributes;
   }
 
-  /** Atributo con el valor que toma en una variación. */
+  /** Attribute together with the value it takes on a variation. */
   @Data
   @Builder
   @NoArgsConstructor

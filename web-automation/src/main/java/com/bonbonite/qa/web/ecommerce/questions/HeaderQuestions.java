@@ -16,18 +16,18 @@ import io.qameta.allure.Step;
 import org.openqa.selenium.WebElement;
 
 /**
- * Validaciones sobre el encabezado del sitio.
+ * Validations on the site header.
  */
 public class HeaderQuestions extends HeaderComponent {
 
   private static final int TIMEOUT = 15;
 
   /**
-   * Verifica que el encabezado ofrezca las cinco secciones del catálogo y los
-   * accesos a la cuenta y al carrito.
+   * Verifies that the header offers the five catalog sections plus the account and
+   * cart entry points.
    *
-   * <p>Todas las comprobaciones son suaves: si falta más de un elemento, el reporte
-   * los lista todos en lugar de detenerse en el primero.</p>
+   * <p>Every check is soft: when more than one element is missing, the report lists
+   * all of them instead of stopping at the first one.</p>
    */
   @Step("Verificar las opciones del encabezado")
   public void verifyMainNavigationIsDisplayed() {

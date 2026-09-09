@@ -6,12 +6,11 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
 /**
- * Banner de consentimiento de cookies.
+ * Cookie consent banner.
  *
- * <p>Aparece en toda sesión nueva y cubre parte de la página, de modo que
- * interfiere con cualquier escenario que empiece por navegar. Se modela como
- * componente porque no pertenece a una pantalla concreta: puede aparecer en
- * cualquiera.</p>
+ * <p>It shows up on every fresh session and covers part of the page, so it gets in
+ * the way of any scenario that starts by navigating. It is modelled as a component
+ * because it belongs to no screen in particular: it may appear on any of them.</p>
  */
 @Getter
 public class CookieBannerComponent extends WebBaseComponent {

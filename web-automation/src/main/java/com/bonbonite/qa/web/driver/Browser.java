@@ -29,13 +29,12 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.safari.SafariDriver;
 
 /**
- * Fábrica de instancias de WebDriver.
+ * Factory of WebDriver instances.
  *
- * <p>Concentra en un solo punto la decisión de qué navegador se levanta y con qué
- * opciones, de modo que agregar un navegador sea agregar una rama y no modificar
- * las pruebas. No se usa ningún gestor de binarios externo: desde Selenium 4.6 el
- * propio Selenium Manager descarga el driver que corresponde a la versión del
- * navegador instalado.</p>
+ * <p>It concentrates in one place the decision of which browser is started and with
+ * which options, so that supporting a new browser means adding a branch instead of
+ * touching the tests. No external driver manager is used: since Selenium 4.6,
+ * Selenium Manager downloads the driver matching the installed browser version.</p>
  */
 @Slf4j
 @UtilityClass
@@ -47,15 +46,15 @@ public class Browser {
   private static final String SAFARI = "safari";
 
   /**
-   * Crea el driver del navegador configurado, local o remoto según corresponda.
+   * Creates the driver of the configured browser, local or remote as needed.
    *
-   * @return driver listo para usarse, con la espera implícita aplicada
-   * @throws CustomException si el navegador configurado no está soportado o si la
-   *                         dirección del Selenium Grid no es válida
+   * @return a driver ready to use, with the implicit wait already applied
+   * @throws CustomException if the configured browser is not supported or the
+   *                         Selenium Grid address is not valid
    */
   public static WebDriver createWebDriver() {
     String browserName = BROWSER_NAME.toLowerCase().trim();
-    log.info("Creando driver para '{}' (grid: {}, headless: {})",
+    log.info("Creating driver for '{}' (grid: {}, headless: {})",
       browserName, SELENIUM_GRID, HEADLESS_MODE);
 
     WebDriver driver = SELENIUM_GRID ? remoteDriver(browserName) : localDriver(browserName);
@@ -65,15 +64,14 @@ public class Browser {
   }
 
   /**
-   * Fija el tamaño de la ventana mediante la API del driver.
+   * Sets the window size through the driver API.
    *
-   * <p>El argumento de línea de comandos del navegador no siempre se respeta, y el
-   * sitio bajo prueba renderiza encabezados distintos según el ancho disponible: si
-   * la ventana queda por debajo del punto de quiebre, los localizadores de la vista
-   * de escritorio apuntan a elementos ocultos. Fijar el tamaño aquí garantiza que
-   * todos los navegadores arranquen con la misma resolución.</p>
+   * <p>The browser command line argument is not always honoured, and the site under
+   * test renders different headers depending on the available width: if the window
+   * ends up below the breakpoint, the desktop locators point at hidden elements.
+   * Setting the size here guarantees every browser starts at the same resolution.</p>
    *
-   * @param driver driver recién creado
+   * @param driver freshly created driver
    */
   private static void applyWindowSize(WebDriver driver) {
     driver.manage().window().setSize(
@@ -159,16 +157,16 @@ public class Browser {
   }
 
   /**
-   * Argumentos necesarios para ejecutar dentro de un contenedor.
+   * Arguments required to run inside a container.
    *
-   * <p>Sin ellos Chrome falla de forma intermitente en Docker y en los runners de
-   * integración continua: {@code --no-sandbox} porque el proceso corre como root sin
-   * los privilegios que exige el aislamiento, y {@code --disable-dev-shm-usage}
-   * porque el tamaño por defecto de la memoria compartida provoca el error
-   * {@code DevToolsActivePort file doesn't exist}. Se aplican junto al modo sin
-   * interfaz, que es el que se usa en esos entornos.</p>
+   * <p>Without them Chrome fails intermittently on Docker and on continuous
+   * integration runners: {@code --no-sandbox} because the process runs as root
+   * without the privileges the sandbox requires, and {@code --disable-dev-shm-usage}
+   * because the default shared memory size triggers the
+   * {@code DevToolsActivePort file doesn't exist} error. They are applied together
+   * with headless mode, which is the one used in those environments.</p>
    *
-   * @return argumentos de compatibilidad con contenedores
+   * @return the container compatibility arguments
    */
   private static List<String> containerArguments() {
     return List.of("--no-sandbox", "--disable-dev-shm-usage");

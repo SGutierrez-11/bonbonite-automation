@@ -12,13 +12,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpStatus;
 
 /**
- * Operaciones de negocio sobre el catálogo.
+ * Business operations on the catalog.
  *
- * <p>Estos métodos existen para resolver por servicio las precondiciones de los
- * escenarios web. Un escenario de compra no debe traer quemado el nombre de un
- * producto: el catálogo cambia y las existencias se agotan, y una prueba que
- * dependa de un dato fijo empieza a fallar por motivos ajenos al defecto que busca.
- * Preguntarle al catálogo qué hay disponible mantiene el escenario estable.</p>
+ * <p>These methods exist to resolve the preconditions of the web scenarios through
+ * services. A purchase scenario must not carry a hardcoded product name: the catalog
+ * changes and stock runs out, and a test that depends on a fixed value starts
+ * failing for reasons unrelated to the defect it looks for. Asking the catalog what
+ * is available keeps the scenario stable.</p>
  */
 @Slf4j
 @UtilityClass
@@ -27,10 +27,10 @@ public class ProductApiTask {
   private static final int DEFAULT_PAGE_SIZE = 20;
 
   /**
-   * Obtiene los productos del catálogo.
+   * Returns the catalog products.
    *
-   * @param perPage cantidad máxima de productos a consultar
-   * @return productos devueltos por el servicio
+   * @param perPage maximum number of products to query
+   * @return the products returned by the service
    */
   public static List<ProductResponse> getCatalogProducts(int perPage) {
     return validateAndDeserializeList(
@@ -38,21 +38,21 @@ public class ProductApiTask {
   }
 
   /**
-   * Obtiene el primer producto del catálogo que esté disponible para compra.
+   * Returns the first catalog product available for purchase.
    *
-   * @return producto con existencias y habilitado para la venta
-   * @throws CustomException si el catálogo no tiene ningún producto disponible
+   * @return a product in stock and enabled for sale
+   * @throws CustomException if the catalog has no available product
    */
   public static ProductResponse getFirstAvailableProduct() {
     return firstAvailable(getCatalogProducts(DEFAULT_PAGE_SIZE), "el catálogo");
   }
 
   /**
-   * Obtiene el primer producto disponible dentro de una categoría.
+   * Returns the first available product within a category.
    *
-   * @param categorySlug identificador de la categoría en la URL
-   * @return producto con existencias y habilitado para la venta
-   * @throws CustomException si la categoría no tiene ningún producto disponible
+   * @param categorySlug category identifier used in the URL
+   * @return a product in stock and enabled for sale
+   * @throws CustomException if the category has no available product
    */
   public static ProductResponse getFirstAvailableProductByCategory(String categorySlug) {
     List<ProductResponse> products = validateAndDeserializeList(
@@ -68,7 +68,7 @@ public class ProductApiTask {
       .findFirst()
       .orElseThrow(() -> new CustomException(
         "No se encontró ningún producto disponible para compra en " + origin));
-    log.info("Producto seleccionado para el escenario: {} ({})", product.getName(), product.getId());
+    log.info("Product selected for the scenario: {} ({})", product.getName(), product.getId());
     return product;
   }
 }

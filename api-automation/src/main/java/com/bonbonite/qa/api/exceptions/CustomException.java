@@ -1,29 +1,29 @@
 package com.bonbonite.qa.api.exceptions;
 
 /**
- * Excepción propia del framework.
+ * Framework specific exception.
  *
- * <p>Se usa para diferenciar los fallos de infraestructura de la automatización
- * (configuración ausente, dato inexistente, respuesta inesperada de un servicio)
- * de los fallos funcionales del producto bajo prueba, que se reportan mediante
- * aserciones.</p>
+ * <p>It separates automation infrastructure failures — missing configuration, absent
+ * data, unexpected service contract — from functional failures of the product under
+ * test, which are reported through assertions. Messages are written in Spanish
+ * because they end up in the execution report.</p>
  */
 public class CustomException extends RuntimeException {
 
   /**
-   * Crea la excepción con un mensaje descriptivo.
+   * Creates the exception with a descriptive message.
    *
-   * @param message detalle de la causa del fallo
+   * @param message detail of what caused the failure
    */
   public CustomException(String message) {
     super(message);
   }
 
   /**
-   * Crea la excepción conservando la causa original.
+   * Creates the exception keeping the original cause.
    *
-   * @param message detalle de la causa del fallo
-   * @param cause   excepción que originó el fallo
+   * @param message detail of what caused the failure
+   * @param cause   exception that originated the failure
    */
   public CustomException(String message, Throwable cause) {
     super(message, cause);

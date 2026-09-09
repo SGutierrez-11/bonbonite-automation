@@ -16,7 +16,7 @@ import io.cucumber.java.es.Entonces;
 import org.testng.Assert;
 
 /**
- * Pasos de navegación por la tienda.
+ * Steps for navigating the store.
  */
 public class NavigationStepDefinitions extends WebBaseScreen {
 
@@ -27,7 +27,7 @@ public class NavigationStepDefinitions extends WebBaseScreen {
   private final HeaderQuestions headerQuestions = new HeaderQuestions();
 
   /**
-   * Abre la tienda y descarta el banner de cookies para dejar la interfaz libre.
+   * Opens the store and dismisses the cookie banner to leave the interface clear.
    */
   @Dado("que ingreso a la tienda con las cookies rechazadas")
   public void openTheStoreRejectingCookies() {
@@ -36,9 +36,9 @@ public class NavigationStepDefinitions extends WebBaseScreen {
   }
 
   /**
-   * Navega a una sección del catálogo desde el menú principal.
+   * Navigates to a catalog section from the main menu.
    *
-   * @param sectionName nombre de la sección tal como aparece en el menú
+   * @param sectionName section name as it appears in the menu
    */
   @Cuando("navego a la sección {string}")
   public void navigateToSection(String sectionName) {
@@ -48,7 +48,7 @@ public class NavigationStepDefinitions extends WebBaseScreen {
   }
 
   /**
-   * Verifica que el encabezado ofrezca todas las secciones del catálogo.
+   * Verifies that the header offers every catalog section.
    */
   @Entonces("el encabezado muestra las secciones del catálogo")
   public void theHeaderShowsTheCatalogSections() {
@@ -56,7 +56,7 @@ public class NavigationStepDefinitions extends WebBaseScreen {
   }
 
   /**
-   * Verifica que el navegador haya llegado al listado de la sección seleccionada.
+   * Verifies that the browser reached the listing of the selected section.
    */
   @Entonces("el sitio muestra el listado de esa sección")
   public void theStoreShowsTheSectionListing() {

@@ -9,13 +9,12 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Carga y resuelve los parámetros de configuración del framework.
+ * Loads and resolves the configuration parameters of the framework.
  *
- * <p>Un parámetro se busca en tres fuentes, en este orden: variable de entorno,
- * propiedad de sistema y archivo de propiedades. Esa precedencia permite que la
- * misma ejecución funcione en local leyendo los archivos, y en integración
- * continua recibiendo credenciales y URLs por variable de entorno, sin cambiar
- * una línea de código.</p>
+ * <p>A parameter is looked up in three sources, in this order: environment variable,
+ * system property and properties file. That precedence lets the same execution work
+ * locally reading the files and on continuous integration receiving credentials and
+ * URLs as environment variables, without touching a single line of code.</p>
  */
 @Slf4j
 public class PropertiesManager {
@@ -30,9 +29,9 @@ public class PropertiesManager {
   private final String propertiesFileName;
 
   /**
-   * Crea el gestor cargando el archivo indicado.
+   * Creates the manager loading the given file.
    *
-   * @param propertiesFileName nombre del archivo dentro de la carpeta de configuración
+   * @param propertiesFileName file name inside the configuration folder
    */
   public PropertiesManager(String propertiesFileName) {
     this.propertiesFileName = propertiesFileName;
@@ -40,22 +39,22 @@ public class PropertiesManager {
   }
 
   /**
-   * Obtiene el gestor de las propiedades comunes a todos los entornos.
+   * Returns the manager for the properties common to every environment.
    *
-   * @return gestor sobre {@code common.properties}
+   * @return a manager over {@code common.properties}
    */
   public static PropertiesManager getInstance() {
     return new PropertiesManager(COMMON_PROPERTIES);
   }
 
   /**
-   * Obtiene el gestor de las propiedades de un módulo para el entorno activo.
+   * Returns the manager for a module's properties on the active environment.
    *
-   * <p>El entorno se toma de la propiedad de sistema {@code environment} y el
-   * archivo resultante sigue el formato {@code <modulo>.<entorno>.properties}.</p>
+   * <p>The environment is taken from the {@code environment} system property and the
+   * resulting file follows the {@code module.environment.properties} format.</p>
    *
-   * @param moduleName prefijo del archivo, por ejemplo {@code web} o {@code api}
-   * @return gestor sobre el archivo del módulo y entorno activos
+   * @param moduleName file prefix, for instance {@code web} or {@code api}
+   * @return a manager over the file of that module and environment
    */
   public static PropertiesManager getInstance(String moduleName) {
     String environment = Environments.byName(System.getProperty("environment")).getName();
@@ -63,35 +62,35 @@ public class PropertiesManager {
   }
 
   /**
-   * Resuelve un parámetro buscándolo en variables de entorno, propiedades de
-   * sistema y, finalmente, en las propiedades comunes.
+   * Resolves a parameter looking it up in environment variables, system properties
+   * and finally the common properties file.
    *
-   * @param key nombre del parámetro
-   * @return valor del parámetro
-   * @throws CustomException si el parámetro no existe en ninguna de las tres fuentes
+   * @param key parameter name
+   * @return the parameter value
+   * @throws CustomException if the parameter is absent from all three sources
    */
   public static String getParameter(String key) {
     return resolve(key, () -> getInstance().getProperty(key));
   }
 
   /**
-   * Resuelve un parámetro propio de un módulo, con la misma precedencia que
-   * {@link #getParameter(String)} pero leyendo el archivo de ese módulo.
+   * Resolves a module specific parameter with the same precedence as
+   * {@link #getParameter(String)} but reading that module's file.
    *
-   * @param key        nombre del parámetro
-   * @param moduleName prefijo del archivo de propiedades del módulo
-   * @return valor del parámetro
-   * @throws CustomException si el parámetro no existe en ninguna de las tres fuentes
+   * @param key        parameter name
+   * @param moduleName prefix of the module properties file
+   * @return the parameter value
+   * @throws CustomException if the parameter is absent from all three sources
    */
   public static String getParameter(String key, String moduleName) {
     return resolve(key, () -> getInstance(moduleName).getProperty(key));
   }
 
   /**
-   * Obtiene el valor de una clave dentro del archivo cargado por esta instancia.
+   * Returns the value of a key inside the file loaded by this instance.
    *
-   * @param key nombre de la propiedad
-   * @return valor asociado, o {@code null} si la clave no está presente
+   * @param key property name
+   * @return the associated value, or {@code null} when the key is absent
    */
   public String getProperty(String key) {
     return properties.getProperty(key.trim());
@@ -120,7 +119,7 @@ public class PropertiesManager {
           "No se encontró el archivo de propiedades: " + PROPERTIES_FOLDER + propertiesFileName);
       }
       properties.load(input);
-      log.debug("Propiedades cargadas desde {}", propertiesFileName);
+      log.debug("Properties loaded from {}", propertiesFileName);
     } catch (IOException exception) {
       throw new CustomException(
         "No fue posible leer el archivo de propiedades: " + propertiesFileName, exception);

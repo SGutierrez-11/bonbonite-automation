@@ -6,13 +6,13 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
 /**
- * Localizadores de la pantalla de cuenta, que aloja tanto el formulario de inicio
- * de sesión como el de registro.
+ * Locators of the account screen, which hosts both the sign in and the registration
+ * forms.
  *
- * <p>La tienda identifica al cliente por su número de cédula y no por el correo,
- * de ahí que el campo de usuario se nombre como documento en toda la automatización.
- * Los dos formularios conviven en la misma dirección y se alternan con el enlace
- * "Regístrate", por lo que se modelan en una sola pantalla.</p>
+ * <p>The store identifies a customer by their national id number instead of their
+ * email, which is why the user field is named after the document across the whole
+ * automation. Both forms live at the same address and are toggled with the
+ * "Regístrate" link, so they are modelled as a single screen.</p>
  */
 @Getter
 public class AccountPage extends WebBaseScreen {
