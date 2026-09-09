@@ -117,6 +117,18 @@ Para bajar todo:
 docker compose -f docker/docker-compose.yml --profile video --profile suite down -v
 ```
 
+## Reporte de ejecución publicado
+
+El reporte de Allure de la última ejecución sobre `main` se publica automáticamente
+en GitHub Pages:
+
+**https://sgutierrez-11.github.io/bonbonite-automation**
+
+No hace falta clonar ni ejecutar nada para revisar la evidencia: el reporte incluye
+los pasos de cada escenario, las capturas de los fallos, el HTML de la página en el
+momento del error, las trazas de cada llamada a la API y la gráfica de tendencia
+entre ejecuciones.
+
 ## Integración continua
 
 El workflow `.github/workflows/tests.yml` se ejecuta en cada push a `main` y en cada
@@ -133,6 +145,12 @@ etiquetas y navegador.
 Las credenciales del usuario de pruebas se inyectan desde *Settings → Secrets and
 variables → Actions* como `CUSTOMER_DOCUMENT` y `CUSTOMER_PASSWORD`. No hay ningún
 dato sensible en el repositorio.
+
+Tras cada ejecución sobre `main`, un segundo job genera el reporte de Allure y lo
+despliega en GitHub Pages con las acciones oficiales de GitHub, sin depender de
+acciones de terceros. Antes de generarlo recupera el historial del reporte anterior
+desde el sitio ya publicado, que es lo que alimenta la gráfica de tendencia; en la
+primera ejecución ese historial no existe todavía y el reporte se genera igual.
 
 ## Configuración sensible
 
