@@ -29,14 +29,23 @@ infraestructura compartida se extrae a un módulo `core-automation`.
 
 ## Requisitos
 
-- JDK 17
-- Maven 3.9 o superior
+- JDK 17, con `JAVA_HOME` apuntando a esa instalación
 - Google Chrome (navegador por defecto)
+
+No es necesario instalar Maven: el proyecto incluye el Maven Wrapper, que descarga
+la versión declarada en `.mvn/wrapper/maven-wrapper.properties` en la primera
+ejecución.
 
 ## Ejecución
 
 ```bash
-mvn clean test
+./mvnw clean test
+```
+
+En Windows:
+
+```
+mvnw.cmd clean test
 ```
 
 ## Estado
