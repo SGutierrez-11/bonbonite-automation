@@ -75,6 +75,57 @@ Reporte:
 ./mvnw allure:serve -pl runner
 ```
 
+## Ejecución sobre Selenium Grid
+
+El proyecto incluye un Grid en `docker/docker-compose.yml` con nodos de Chrome,
+Firefox y Edge. Permite ejecutar en varios navegadores y en paralelo sin
+instalarlos en la máquina.
+
+```bash
+docker compose -f docker/docker-compose.yml up -d
+```
+
+Con el Grid arriba, la suite se apunta a él por parámetro:
+
+```bash
+./mvnw clean test -pl runner -am -Dselenium.grid=true
+```
+
+La consola del Grid queda en `http://localhost:4444`. Para ver un navegador en
+vivo hay VNC por navegador en `http://localhost:7900` (Chrome), `7901` (Firefox)
+y `7902` (Edge), con la contraseña `secret`.
+
+Dos perfiles opcionales:
+
+```bash
+docker compose -f docker/docker-compose.yml --profile video up -d
+```
+
+```bash
+docker compose -f docker/docker-compose.yml --profile suite up --build --abort-on-container-exit
+```
+
+El primero graba un video por sesión en `runner/target/videos`. El segundo ejecuta
+la suite completa dentro de un contenedor, sin necesidad de tener Java ni Maven
+instalados.
+
+Para bajar todo:
+
+```bash
+docker compose -f docker/docker-compose.yml --profile video --profile suite down -v
+```
+
+### Por qué Grid y no otra opción
+
+Se evaluaron tres caminos: un navegador instalado en la máquina, Selenium Grid en
+contenedores y Testcontainers. El primero no permite multi-navegador sin instalar
+cada uno; el tercero es más elegante pero añade complejidad que este alcance no
+justifica. El Grid en `docker-compose` da paralelismo real y los tres navegadores
+sin instalar nada, y es el mismo mecanismo que se usaría en un pipeline serio.
+
+Las imágenes van con versión fija, no `latest`: un navegador que cambia de versión
+sin aviso rompe la suite sin que nadie haya tocado el código.
+
 ## Estado
 
 En construcción.

@@ -1,0 +1,111 @@
+name: bonbonite-grid
+
+# Selenium Grid local para ejecutar la suite en varios navegadores y en paralelo
+# sin instalarlos en la máquina. Las imágenes van con tag fijo a proposito: un
+# navegador que cambia de version sin aviso rompe la suite sin que nadie haya
+# tocado el codigo.
+
+services:
+
+  selenium-hub:
+    image: selenium/hub:4.40.0
+    container_name: bonbonite-hub
+    ports:
+      - "4442:4442"
+      - "4443:4443"
+      - "4444:4444"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4444/wd/hub/status"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  chrome:
+    image: selenium/node-chrome:4.40.0
+    container_name: bonbonite-node-chrome
+    depends_on:
+      selenium-hub:
+        condition: service_healthy
+    environment:
+      SE_EVENT_BUS_HOST: selenium-hub
+      SE_EVENT_BUS_PUBLISH_PORT: 4442
+      SE_EVENT_BUS_SUBSCRIBE_PORT: 4443
+      SE_NODE_MAX_SESSIONS: 3
+      SE_NODE_OVERRIDE_MAX_SESSIONS: true
+      SE_SCREEN_WIDTH: 1920
+      SE_SCREEN_HEIGHT: 1080
+    # Sin esta memoria compartida Chrome se cae de forma intermitente dentro del
+    # contenedor. Es la causa mas frecuente de "pasa en local y falla en Docker".
+    shm_size: 2gb
+    ports:
+      - "7900:7900"
+
+  firefox:
+    image: selenium/node-firefox:4.40.0
+    container_name: bonbonite-node-firefox
+    depends_on:
+      selenium-hub:
+        condition: service_healthy
+    environment:
+      SE_EVENT_BUS_HOST: selenium-hub
+      SE_EVENT_BUS_PUBLISH_PORT: 4442
+      SE_EVENT_BUS_SUBSCRIBE_PORT: 4443
+      SE_NODE_MAX_SESSIONS: 2
+      SE_NODE_OVERRIDE_MAX_SESSIONS: true
+      SE_SCREEN_WIDTH: 1920
+      SE_SCREEN_HEIGHT: 1080
+    shm_size: 2gb
+    ports:
+      - "7901:7900"
+
+  edge:
+    image: selenium/node-edge:4.40.0
+    container_name: bonbonite-node-edge
+    depends_on:
+      selenium-hub:
+        condition: service_healthy
+    environment:
+      SE_EVENT_BUS_HOST: selenium-hub
+      SE_EVENT_BUS_PUBLISH_PORT: 4442
+      SE_EVENT_BUS_SUBSCRIBE_PORT: 4443
+      SE_NODE_MAX_SESSIONS: 2
+      SE_NODE_OVERRIDE_MAX_SESSIONS: true
+      SE_SCREEN_WIDTH: 1920
+      SE_SCREEN_HEIGHT: 1080
+    shm_size: 2gb
+    ports:
+      - "7902:7900"
+
+  # Grabacion de video por sesion. Queda fuera del arranque por defecto porque
+  # ralentiza la ejecucion y pesa; se activa con:
+  #   docker compose -f docker/docker-compose.yml --profile video up -d
+  video:
+    image: selenium/video:ffmpeg-8.1-20260905
+    container_name: bonbonite-video
+    profiles: ["video"]
+    depends_on:
+      - chrome
+    environment:
+      DISPLAY_CONTAINER_NAME: bonbonite-node-chrome
+      SE_VIDEO_FOLDER: /videos
+    volumes:
+      - ../runner/target/videos:/videos
+
+  # Ejecuta la suite completa dentro de un contenedor, contra el Grid de arriba.
+  # Se activa con:
+  #   docker compose -f docker/docker-compose.yml --profile suite up --build --abort-on-container-exit
+  tests:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: bonbonite-tests
+    profiles: ["suite"]
+    depends_on:
+      selenium-hub:
+        condition: service_healthy
+    environment:
+      CUSTOMER_DOCUMENT: ${CUSTOMER_DOCUMENT:-}
+      CUSTOMER_PASSWORD: ${CUSTOMER_PASSWORD:-}
+    # El volumen es lo que permite recuperar los resultados de Allure al terminar.
+    volumes:
+      - ../runner/target:/app/runner/target

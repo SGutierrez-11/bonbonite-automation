@@ -12,6 +12,7 @@ import com.bonbonite.qa.api.exceptions.CustomException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -144,12 +145,33 @@ public class Browser {
   }
 
   private static List<String> commonArguments() {
-    return List.of(
+    List<String> arguments = new ArrayList<>(List.of(
       "--window-size=" + WINDOW_SIZE,
       "--disable-gpu",
       "--disable-extensions",
       "--disable-notifications",
-      "--remote-allow-origins=*");
+      "--remote-allow-origins=*"));
+
+    if (HEADLESS_MODE) {
+      arguments.addAll(containerArguments());
+    }
+    return arguments;
+  }
+
+  /**
+   * Argumentos necesarios para ejecutar dentro de un contenedor.
+   *
+   * <p>Sin ellos Chrome falla de forma intermitente en Docker y en los runners de
+   * integración continua: {@code --no-sandbox} porque el proceso corre como root sin
+   * los privilegios que exige el aislamiento, y {@code --disable-dev-shm-usage}
+   * porque el tamaño por defecto de la memoria compartida provoca el error
+   * {@code DevToolsActivePort file doesn't exist}. Se aplican junto al modo sin
+   * interfaz, que es el que se usa en esos entornos.</p>
+   *
+   * @return argumentos de compatibilidad con contenedores
+   */
+  private static List<String> containerArguments() {
+    return List.of("--no-sandbox", "--disable-dev-shm-usage");
   }
 
   private static String windowDimension(int index) {
