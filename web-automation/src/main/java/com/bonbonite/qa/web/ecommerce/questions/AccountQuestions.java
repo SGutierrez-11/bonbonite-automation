@@ -89,6 +89,22 @@ public class AccountQuestions extends AccountPage {
       REGISTER_SUBMIT_BUTTON.getValue() + " debe estar habilitado");
   }
 
+  /**
+   * Verifies that the store refused to submit an incomplete sign in form.
+   *
+   * <p>The mandatory fields are enforced by the browser, not by the server, so there
+   * is no error banner to look for: the evidence is that the form is still on screen
+   * and the customer never left the sign in screen.</p>
+   */
+  @Step("Verificar que el formulario no se envió")
+  public void verifyFormWasNotSubmitted() {
+    getSoftAssert().assertTrue(isTheElementVisible(getTxtLoginDocumentNumber(), TIMEOUT),
+      LOGIN_DOCUMENT_INPUT.getValue() + " sigue en pantalla porque el formulario no se envió");
+    getSoftAssert().assertTrue(
+      String.valueOf(getTxtLoginDocumentNumber().getDomProperty("value")).isBlank(),
+      LOGIN_DOCUMENT_INPUT.getValue() + " permanece vacío");
+  }
+
   private void assertVisible(WebElement element, String description) {
     getSoftAssert().assertTrue(isTheElementVisible(element, TIMEOUT),
       description + " " + IS_VISIBLE.getValue());

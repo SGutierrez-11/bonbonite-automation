@@ -28,4 +28,4 @@ Característica: Inicio de sesión
   @regresion @negativo
   Escenario: La tienda exige los campos obligatorios
     Cuando envío el formulario de inicio de sesión vacío
-    Entonces la tienda rechaza el acceso e informa el error
+    Entonces la tienda no permite enviar el formulario

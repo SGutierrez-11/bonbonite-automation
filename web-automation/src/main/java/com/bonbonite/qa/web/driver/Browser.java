@@ -40,6 +40,21 @@ import org.openqa.selenium.safari.SafariDriver;
 @UtilityClass
 public class Browser {
 
+  /**
+   * User agent of a regular desktop Chrome.
+   *
+   * <p>In headless mode Chrome announces itself as {@code HeadlessChrome}, which the
+   * firewall of the site under test reads as a bot and answers with a block. Sending
+   * the same string a real browser sends removes that false rejection; it does not
+   * change how the page behaves.</p>
+   */
+  private static final String DESKTOP_USER_AGENT =
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+      + "(KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36";
+
+  /** Seconds allowed for a page to finish loading before the driver gives up. */
+  private static final int PAGE_LOAD_TIMEOUT = 90;
+
   private static final String CHROME = "chrome";
   private static final String EDGE = "edge";
   private static final String FIREFOX = "firefox";
@@ -59,6 +74,7 @@ public class Browser {
 
     WebDriver driver = SELENIUM_GRID ? remoteDriver(browserName) : localDriver(browserName);
     driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(WAIT_IMPLICIT));
+    driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(PAGE_LOAD_TIMEOUT));
     applyWindowSize(driver);
     return driver;
   }
@@ -109,6 +125,8 @@ public class Browser {
   private static ChromeOptions chromeOptions() {
     ChromeOptions options = new ChromeOptions();
     options.addArguments(commonArguments());
+    options.addArguments("--user-agent=" + DESKTOP_USER_AGENT);
+    options.setExperimentalOption("excludeSwitches", List.of("enable-automation"));
     if (HEADLESS_MODE) {
       options.addArguments("--headless=new");
     }
@@ -121,6 +139,7 @@ public class Browser {
   private static EdgeOptions edgeOptions() {
     EdgeOptions options = new EdgeOptions();
     options.addArguments(commonArguments());
+    options.addArguments("--user-agent=" + DESKTOP_USER_AGENT);
     if (HEADLESS_MODE) {
       options.addArguments("--headless=new");
     }
@@ -148,6 +167,7 @@ public class Browser {
       "--disable-gpu",
       "--disable-extensions",
       "--disable-notifications",
+      "--disable-blink-features=AutomationControlled",
       "--remote-allow-origins=*"));
 
     if (HEADLESS_MODE) {

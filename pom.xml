@@ -40,7 +40,7 @@
         <maven.surefire.plugin.version>3.5.3</maven.surefire.plugin.version>
         <allure.maven.version>2.16.1</allure.maven.version>
 
-        <threadCount>3</threadCount>
+        <threadCount>1</threadCount>
         <suiteXmlFile>regression.xml</suiteXmlFile>
 
         <!-- Los modulos de codigo son bibliotecas y no ejecutan pruebas. Surefire se

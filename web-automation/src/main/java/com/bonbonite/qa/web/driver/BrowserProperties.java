@@ -41,6 +41,10 @@ public class BrowserProperties {
   /** Address of the Selenium Grid hub. */
   public static final String SELENIUM_GRID_URL = getParameter("selenium.grid.url");
 
+  /** Seconds of pause between scenarios, to stay under the rate limit of the site. */
+  public static final int SCENARIO_PACING_SECONDS =
+    Integer.parseInt(getParameter("scenario.pacing.seconds"));
+
   /** Whether a screenshot is attached on every step, not only on failures. */
   public static final boolean SCREENSHOT_ON_STEP =
     Boolean.parseBoolean(getParameter("screenshot.on.step"));

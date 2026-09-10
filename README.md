@@ -129,6 +129,49 @@ los pasos de cada escenario, las capturas de los fallos, el HTML de la página e
 momento del error, las trazas de cada llamada a la API y la gráfica de tendencia
 entre ejecuciones.
 
+## Limitación conocida: el sitio bloquea el tráfico automatizado
+
+El sitio bajo prueba está en **producción** y detrás de un cortafuegos que rechaza el
+tráfico que interpreta como automatizado. Tras unos minutos de ejecución continua
+empieza a responder **403 Forbidden**, incluso a peticiones simples desde el mismo
+equipo. El bloqueo se levanta solo al cabo de un rato.
+
+**No es un defecto del framework.** Es la infraestructura del cliente defendiéndose, y
+es el argumento más fuerte a favor de la recomendación principal del informe: habilitar
+un ambiente de pruebas separado.
+
+### Qué hace el proyecto al respecto
+
+| Medida | Efecto |
+|---|---|
+| Detección explícita del bloqueo | `WebBaseScreen` verifica la página servida y lanza la excepción del framework al detectar un 403. El escenario se marca como **roto**, no como fallido, así el reporte no le achaca a Bon-bonite un problema de infraestructura. |
+| Reintento acotado | Un escenario se reintenta **una vez y solo si el fallo es de entorno**. Una aserción que no se cumple nunca se reintenta: sería enmascarar un defecto real. |
+| Espaciado entre escenarios | `scenario.pacing.seconds` introduce una pausa antes de cada escenario para no superar el límite de peticiones. Es la única pausa fija del proyecto y no es una espera de interfaz. |
+| Agente de usuario real | En modo headless Chrome se anuncia como `HeadlessChrome`, lo que dispara el bloqueo. Se envía el mismo agente que manda un navegador de escritorio. |
+| Ejecución secuencial por defecto | El paralelismo fue lo que disparó el bloqueo la primera vez. `threadCount` viene en 1 y se sube solo cuando exista un ambiente que lo tolere. |
+
+### Cómo ejecutar cuando el sitio está bloqueando
+
+```bash
+mvnw.cmd clean test -pl runner -am -DthreadCount=1 "-Dcucumber.filter.tags=@smoke"
+```
+
+Un subconjunto pequeño y espaciado tiene muchas más probabilidades de terminar en
+verde. Si aun así falla, abre el reporte de Allure y revisa el HTML adjunto: si dice
+*403 Forbidden*, hay que esperar, no hay que tocar el código.
+
+Para subir la pausa entre escenarios en una corrida puntual:
+
+```bash
+mvnw.cmd clean test -pl runner -am -Dscenario.pacing.seconds=15
+```
+
+### La solución de fondo
+
+Que el cliente permita las direcciones desde las que se ejecuta la suite, o que
+habilite un ambiente de pruebas. Mientras se ejecute contra producción, la
+disponibilidad del sitio para pruebas depende de un cortafuegos que no controlamos.
+
 ## Integración continua
 
 El workflow `.github/workflows/tests.yml` se ejecuta en cada push a `main` y en cada

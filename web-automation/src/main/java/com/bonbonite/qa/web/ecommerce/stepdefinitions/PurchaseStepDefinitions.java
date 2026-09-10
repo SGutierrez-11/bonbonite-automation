@@ -46,6 +46,7 @@ public class PurchaseStepDefinitions extends WebBaseScreen {
    */
   @Dado("que abro un producto disponible de la sección {string}")
   public void openAnAvailableProductFromTheSection(String sectionName) {
+    cartTasks.emptyCart();
     StoreSection section = StoreSection.byMenuName(sectionName);
     ProductResponse product =
       ProductApiTask.getFirstAvailableProductByCategory(section.getCategorySlug());
@@ -56,10 +57,10 @@ public class PurchaseStepDefinitions extends WebBaseScreen {
   /**
    * Selects the first available size and adds the product to the cart.
    */
-  @Cuando("agrego el producto al carrito en la primera talla disponible")
+  @Cuando("agrego el producto al carrito en la primera talla con existencias")
   public void addTheProductToTheCart() {
     getTestContext().set(PRODUCT_PRICE.name(), productDetailTasks.getProductPrice());
-    getTestContext().set(SELECTED_SIZE.name(), productDetailTasks.selectFirstAvailableSize());
+    getTestContext().set(SELECTED_SIZE.name(), productDetailTasks.selectFirstPurchasableSize());
     productDetailTasks.addToCart();
   }
 
@@ -84,6 +85,7 @@ public class PurchaseStepDefinitions extends WebBaseScreen {
   @Cuando("continúo al checkout y diligencio los datos de envío")
   public void continueToCheckoutAndFillShippingData() {
     cartTasks.goToCheckout();
+    checkoutTasks.awaitOrderSummary();
     checkoutTasks.fillShippingData(CustomerBuilder.randomCustomer());
   }
 
