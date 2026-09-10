@@ -41,10 +41,6 @@ jobs:
       tags: ${{ steps.plan.outputs.tags }}
       hilos: ${{ steps.plan.outputs.hilos }}
     steps:
-      # GitHub no permite ponerle fecha de fin a un cron, asi que la ventana se
-      # controla aqui. Pasado el 16 de septiembre la corrida programada se omite
-      # sola y deja de consumir minutos; las corridas manuales y por push siguen
-      # funcionando.
       - name: Decidir alcance y vigencia
         id: plan
         run: |

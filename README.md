@@ -158,17 +158,26 @@ El proyecto nunca versiona credenciales. Las llaves existen vacías en
 `runner/src/test/resources/config/web.prod.properties` a modo de documentación, y el
 valor se entrega por variable de entorno:
 
+En local, lo más cómodo es un archivo `.env` en la raíz del proyecto. Está ignorado
+por Git y nunca se versiona:
+
+```
+CUSTOMER_DOCUMENT=<numero de cedula>
+CUSTOMER_PASSWORD=<contrasena>
+```
+
+También se pueden definir como variables de entorno del sistema, que es lo que hace
+la integración continua a partir de los *secrets*:
+
 ```bash
 setx CUSTOMER_DOCUMENT "<numero de cedula>"
 ```
 
-```bash
-setx CUSTOMER_PASSWORD "<contrasena>"
-```
-
-El `PropertiesManager` resuelve cada parámetro buscando primero en variables de
-entorno, luego en parámetros de ejecución y por último en el archivo, de modo que la
-misma suite corre en local, en Docker y en integración continua sin cambiar código.
+El `PropertiesManager` resuelve cada parámetro en este orden: variable de entorno,
+parámetro de ejecución `-D`, archivo `.env` de la raíz y, por último, el archivo de
+configuración. Gracias a esa precedencia la misma suite corre en local, en Docker y en
+integración continua sin cambiar una línea de código, y el `.env` no interfiere en CI
+porque allí las credenciales llegan como variables de entorno reales.
 
 ### Por qué Grid y no otra opción
 
