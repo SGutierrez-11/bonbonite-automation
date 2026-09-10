@@ -5,7 +5,6 @@ import static com.bonbonite.qa.web.assertions.SoftAssertManager.getSoftAssert;
 import static com.bonbonite.qa.web.ecommerce.enums.ElementDescriptions.CHECKOUT_ORDER_REVIEW;
 import static com.bonbonite.qa.web.ecommerce.enums.ElementDescriptions.CHECKOUT_PAYMENT_METHOD;
 import static com.bonbonite.qa.web.ecommerce.enums.ElementDescriptions.CHECKOUT_PLACE_ORDER_BUTTON;
-import static com.bonbonite.qa.web.ecommerce.enums.ElementDescriptions.CHECKOUT_SHIPPING_METHODS;
 import static com.bonbonite.qa.web.ecommerce.enums.ElementDescriptions.IS_ENABLED;
 import static com.bonbonite.qa.web.ecommerce.enums.ElementDescriptions.IS_VISIBLE;
 
@@ -51,13 +50,15 @@ public class PurchaseQuestions extends CheckoutPage {
    * <p>The order button is asserted as available on purpose: reaching that state is
    * the agreed limit of the automation, because clicking it would create a real order
    * in the client's system.</p>
+   *
+   * <p>Shipping is not asserted: the store does not calculate it at checkout, it
+   * announces that the cost will be informed before payment. There is no value to
+   * verify there, and asserting its presence would only make the scenario brittle.</p>
    */
   @Step("Verificar el resumen de la orden")
   public void verifyOrderSummaryIsComplete() {
     getSoftAssert().assertTrue(isTheElementVisible(getLblOrderReview(), TIMEOUT),
       CHECKOUT_ORDER_REVIEW.getValue() + " " + IS_VISIBLE.getValue());
-    getSoftAssert().assertTrue(isTheElementVisible(getLstShippingMethods(), TIMEOUT),
-      CHECKOUT_SHIPPING_METHODS.getValue() + " " + IS_VISIBLE.getValue());
     getSoftAssert().assertTrue(isTheElementVisible(getLblPaymentMethod(), TIMEOUT),
       CHECKOUT_PAYMENT_METHOD.getValue() + " " + IS_VISIBLE.getValue());
     getSoftAssert().assertTrue(isTheElementVisible(getBtnPlaceOrder(), TIMEOUT),

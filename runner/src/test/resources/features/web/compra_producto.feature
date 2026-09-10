@@ -18,7 +18,7 @@ Característica: Compra de producto
   @smoke @e2e
   Escenario: El cliente llega al resumen de su orden con el producto elegido
     Dado que abro un producto disponible de la sección "Zapatos"
-    Cuando agrego el producto al carrito en la primera talla disponible
+    Cuando agrego el producto al carrito en la primera talla con existencias
     Entonces el carrito refleja el producto y el subtotal correcto
     Cuando continúo al checkout y diligencio los datos de envío
     Entonces el resumen de la orden está completo y listo para registrarse

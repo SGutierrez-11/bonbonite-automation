@@ -33,6 +33,9 @@ public class CartPage extends WebBaseScreen {
   @FindBy(css = "td.product-remove a")
   private WebElement btnRemoveFirstItem;
 
+  @FindBy(css = "a.remove[href*='remove_item']")
+  private List<WebElement> lstRemoveLinks;
+
   @FindBy(css = ".cart-empty, .woocommerce-cart-form")
   private WebElement lblCartState;
 }

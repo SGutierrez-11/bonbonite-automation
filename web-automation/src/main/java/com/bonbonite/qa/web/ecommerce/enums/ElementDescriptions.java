@@ -61,6 +61,7 @@ public enum ElementDescriptions {
   ACCOUNT_FIRST_NAME_INPUT("Campo nombre de la cuenta"),
   ACCOUNT_LAST_NAME_INPUT("Campo apellido de la cuenta"),
   ACCOUNT_DISPLAY_NAME_INPUT("Campo nombre para mostrar"),
+  ACCOUNT_UPDATE_BUTTON("Botón actualizar información"),
   ACCOUNT_SAVE_BUTTON("Botón guardar cambios"),
   ACCOUNT_SUCCESS_MESSAGE("Mensaje de confirmación de la cuenta"),
 
@@ -70,12 +71,14 @@ public enum ElementDescriptions {
   PRODUCT_SIZE_SELECT("Selector de talla"),
   PRODUCT_QUANTITY_INPUT("Campo cantidad"),
   PRODUCT_ADD_TO_CART_BUTTON("Botón añadir al carrito"),
+  OUT_OF_STOCK_MODAL("Aviso de producto sin existencias"),
 
   CART_ITEM("Producto del carrito"),
   CART_ITEM_NAME("Nombre del producto en el carrito"),
   CART_SUBTOTAL_LABEL("Subtotal del carrito"),
   CART_TOTAL_LABEL("Total del carrito"),
   CART_CHECKOUT_BUTTON("Botón finalizar compra"),
+  CART_REMOVE_BUTTON("Botón eliminar del carrito"),
 
   CHECKOUT_FORM("Formulario de finalizar compra"),
   CHECKOUT_DOCUMENT_TYPE("Tipo de documento"),
@@ -93,6 +96,7 @@ public enum ElementDescriptions {
   CHECKOUT_ORDER_PRODUCT("Producto del resumen de la orden"),
   CHECKOUT_SHIPPING_METHODS("Métodos de envío"),
   CHECKOUT_PAYMENT_METHOD("Método de pago"),
+  CHECKOUT_CONTINUE_BUTTON("Botón continuar del checkout"),
   CHECKOUT_PLACE_ORDER_BUTTON("Botón registrar orden"),
 
   PQRS_FORM("Formulario de PQRS"),

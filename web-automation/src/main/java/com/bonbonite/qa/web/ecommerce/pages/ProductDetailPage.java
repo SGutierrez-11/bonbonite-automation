@@ -13,6 +13,10 @@ import org.openqa.selenium.support.FindBy;
  * hidden select. The automation clicks the visible button, which is what a customer
  * does, and reads the resulting variation identifier from the hidden field to confirm
  * the selection actually registered.</p>
+ *
+ * <p>Choosing a size with no stock opens the reservation modal, which covers the
+ * screen and swallows any following click. Its locators live here so the tasks can
+ * dismiss it and carry on with another size.</p>
  */
 @Getter
 public class ProductDetailPage extends WebBaseScreen {
@@ -43,4 +47,10 @@ public class ProductDetailPage extends WebBaseScreen {
 
   @FindBy(css = ".woocommerce-variation-availability, .stock")
   private WebElement lblAvailability;
+
+  @FindBy(id = "out-of-stock-modal")
+  private WebElement lblOutOfStockModal;
+
+  @FindBy(id = "close-modal")
+  private WebElement btnCloseOutOfStockModal;
 }

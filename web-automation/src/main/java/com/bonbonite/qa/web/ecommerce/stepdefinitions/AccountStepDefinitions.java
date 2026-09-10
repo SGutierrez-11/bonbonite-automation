@@ -90,6 +90,14 @@ public class AccountStepDefinitions {
   }
 
   /**
+   * Verifies that an incomplete form never reached the server.
+   */
+  @Entonces("la tienda no permite enviar el formulario")
+  public void theStoreDoesNotAllowSubmitting() {
+    accountQuestions.verifyFormWasNotSubmitted();
+  }
+
+  /**
    * Opens the registration form from the account screen.
    */
   @Cuando("abro el formulario de registro")
