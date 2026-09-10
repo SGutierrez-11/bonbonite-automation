@@ -1,8 +1,11 @@
 package com.bonbonite.qa.api.config;
 
 import com.bonbonite.qa.api.exceptions.CustomException;
+import io.github.cdimascio.dotenv.Dotenv;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Properties;
 import java.util.function.Supplier;
 import lombok.Getter;
@@ -11,10 +14,11 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * Loads and resolves the configuration parameters of the framework.
  *
- * <p>A parameter is looked up in three sources, in this order: environment variable,
- * system property and properties file. That precedence lets the same execution work
- * locally reading the files and on continuous integration receiving credentials and
- * URLs as environment variables, without touching a single line of code.</p>
+ * <p>A parameter is looked up in four sources, in this order: environment variable,
+ * system property, {@code .env} file at the project root, and properties file. That
+ * precedence lets the same execution work locally reading a {@code .env} that is
+ * never versioned, and on continuous integration receiving the same values as
+ * secrets, without touching a single line of code.</p>
  */
 @Slf4j
 public class PropertiesManager {
@@ -22,6 +26,21 @@ public class PropertiesManager {
   private static final String PROPERTIES_FOLDER = "config/";
   private static final String PROPERTIES_EXTENSION = ".properties";
   private static final String COMMON_PROPERTIES = "common.properties";
+  private static final String DOTENV_FILE = ".env";
+
+  /**
+   * Reader of the local {@code .env} file.
+   *
+   * <p>The file is optional: it is the convenience of whoever runs the suite on their
+   * machine, and it does not exist on continuous integration, where the same keys
+   * arrive as real environment variables. Missing entries are ignored so that its
+   * absence never breaks the execution.</p>
+   */
+  private static final Dotenv DOTENV = Dotenv.configure()
+    .directory(resolveDotenvDirectory())
+    .ignoreIfMalformed()
+    .ignoreIfMissing()
+    .load();
 
   @Getter
   private final Properties properties = new Properties();
@@ -62,12 +81,12 @@ public class PropertiesManager {
   }
 
   /**
-   * Resolves a parameter looking it up in environment variables, system properties
-   * and finally the common properties file.
+   * Resolves a parameter looking it up in environment variables, system properties,
+   * the {@code .env} file and finally the common properties file.
    *
    * @param key parameter name
    * @return the parameter value
-   * @throws CustomException if the parameter is absent from all three sources
+   * @throws CustomException if the parameter is absent from every source
    */
   public static String getParameter(String key) {
     return resolve(key, () -> getInstance().getProperty(key));
@@ -80,7 +99,7 @@ public class PropertiesManager {
    * @param key        parameter name
    * @param moduleName prefix of the module properties file
    * @return the parameter value
-   * @throws CustomException if the parameter is absent from all three sources
+   * @throws CustomException if the parameter is absent from every source
    */
   public static String getParameter(String key, String moduleName) {
     return resolve(key, () -> getInstance(moduleName).getProperty(key));
@@ -97,9 +116,13 @@ public class PropertiesManager {
   }
 
   private static String resolve(String key, Supplier<String> fromFile) {
-    String value = System.getenv(formatAsEnvironmentVariable(key));
+    String environmentVariable = formatAsEnvironmentVariable(key);
+    String value = System.getenv(environmentVariable);
     if (isBlank(value)) {
       value = System.getProperty(key);
+    }
+    if (isBlank(value)) {
+      value = DOTENV.get(environmentVariable);
     }
     if (isBlank(value)) {
       value = fromFile.get();
@@ -126,6 +149,26 @@ public class PropertiesManager {
     }
   }
 
+  /**
+   * Finds the directory that holds the {@code .env} file.
+   *
+   * <p>The build sets the working directory to the module being executed, while the
+   * file lives at the root of the repository, so the lookup walks up the directory
+   * tree until it finds it. When there is none, the working directory is returned and
+   * the reader simply finds nothing.</p>
+   *
+   * @return absolute path of the directory to read the file from
+   */
+  private static String resolveDotenvDirectory() {
+    Path current = Path.of(System.getProperty("user.dir")).toAbsolutePath();
+    for (Path directory = current; directory != null; directory = directory.getParent()) {
+      if (Files.isRegularFile(directory.resolve(DOTENV_FILE))) {
+        return directory.toString();
+      }
+    }
+    return current.toString();
+  }
+
   private static String formatAsEnvironmentVariable(String key) {
     return key.toUpperCase().replace(".", "_");
   }
@@ -135,11 +178,13 @@ public class PropertiesManager {
   }
 
   private static String buildMissingParameterMessage(String key) {
+    String environmentVariable = formatAsEnvironmentVariable(key);
     return String.format(
       "No fue posible resolver el parámetro '%s'. Defínelo de alguna de estas formas:%n"
         + "  1. variable de entorno %s%n"
         + "  2. parámetro de ejecución -D%s=<valor>%n"
-        + "  3. entrada en el archivo de configuración: %s=<valor>",
-      key, formatAsEnvironmentVariable(key), key, key);
+        + "  3. entrada %s=<valor> en el archivo .env de la raíz del proyecto%n"
+        + "  4. entrada %s=<valor> en el archivo de configuración",
+      key, environmentVariable, key, environmentVariable, key);
   }
 }

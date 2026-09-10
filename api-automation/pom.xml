@@ -66,6 +66,12 @@
             <artifactId>commons-io</artifactId>
         </dependency>
 
+        <!-- Lectura del archivo .env para las credenciales en ejecucion local -->
+        <dependency>
+            <groupId>io.github.cdimascio</groupId>
+            <artifactId>dotenv-java</artifactId>
+        </dependency>
+
         <!-- Logs -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
