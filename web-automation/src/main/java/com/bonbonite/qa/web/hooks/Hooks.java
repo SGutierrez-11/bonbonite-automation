@@ -1,6 +1,7 @@
 package com.bonbonite.qa.web.hooks;
 
 import static com.bonbonite.qa.api.context.TestContextManager.cleanTestContext;
+import static com.bonbonite.qa.web.driver.BrowserProperties.SCENARIO_PACING_SECONDS;
 
 import com.bonbonite.qa.web.allure.AllureLogger;
 import com.bonbonite.qa.web.assertions.SoftAssertManager;
@@ -10,7 +11,9 @@ import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.BeforeAll;
 import io.cucumber.java.Scenario;
+import java.time.Duration;
 import lombok.extern.slf4j.Slf4j;
+import org.awaitility.Awaitility;
 
 /**
  * Lifecycle of the web scenarios.
@@ -34,6 +37,29 @@ public class Hooks {
   public static void reportEnvironment() {
     AllureLogger.writeEnvironmentInfo();
     AllureLogger.copyCategories();
+  }
+
+  /**
+   * Spaces out the scenarios so the suite stays under the rate limit of the site.
+   *
+   * <p>This is the one fixed pause the framework allows, and it is not a wait for the
+   * interface: it is traffic pacing. The site under test answers {@code 403} when it
+   * receives many requests in a short window, and a blocked run reports nothing about
+   * the quality of the product. Every other wait in the project is explicit and by
+   * condition.</p>
+   *
+   * <p>The real fix belongs to the client: allowing the addresses that run the suite.
+   * Until then, the pause is what keeps the execution usable.</p>
+   */
+  @Before(value = "@web", order = 10)
+  public void paceRequests() {
+    if (SCENARIO_PACING_SECONDS <= 0) {
+      return;
+    }
+    Awaitility.await()
+      .pollDelay(Duration.ofSeconds(SCENARIO_PACING_SECONDS))
+      .atMost(Duration.ofSeconds(SCENARIO_PACING_SECONDS + 5L))
+      .until(() -> true);
   }
 
   /**
